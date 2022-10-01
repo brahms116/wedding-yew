@@ -1,0 +1,26 @@
+{
+  "name": "yew",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tailwindcss -o ./tailwind.css --minify --watch",
+    "build-css": "NODE_ENV=PRODUCTION tailwindcss -o ./tailwind.css --minify",
+    "build": "npm run build-css && trunk build --release",
+    "dev": "trunk serve --address=0.0.0.0 --watch ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brahms116/yew-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brahms116/yew-demo/issues"
+  },
+  "homepage": "https://github.com/brahms116/yew-demo#readme",
+  "dependencies": {
+    "tailwindcss": "^3.1.8"
+  }
+}
