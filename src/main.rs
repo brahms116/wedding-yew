@@ -1,7 +1,5 @@
 use gloo::timers::callback::Timeout;
-use yew::{
-    classes, function_component, html, use_effect_with_deps, use_state, Callback, Html, Properties,
-};
+use yew::{classes, function_component, html, use_effect_with_deps, use_state, Html, Properties};
 
 #[derive(Properties, PartialEq)]
 struct WordContainerProps {
@@ -29,21 +27,21 @@ fn word_container(props: &WordContainerProps) -> Html {
     );
 
     html! {
-        <div class={classes!(vec![(*class).clone(),"mr-1 text-xl".into()])}>{props.word.clone()}</div>
+        <div class={classes!(vec![(*class).clone(),"mr-1 text-2xl".into()])}>{props.word.clone()}</div>
     }
 }
 
 #[function_component(App)]
 fn app() -> Html {
-    let msg: &str = "Hello, some message should be here";
+    let msg: &str = "Hello, some message should be here, lets make it a super super long message so that wrapping occurs. Did you know that mia can get really cranky sometimes?";
     let words = msg.split(" ").collect::<Vec<&str>>();
 
     html! {
         <div class="w-screen h-screen flex justify-center items-center">
-            <div class="flex flex-wrap w-2/5">
+            <div class="flex flex-wrap w-2/5 justify-center">
                 {
                    words.into_iter().enumerate().map( |(i,w)|{html!{
-                       <WordContainer delay={i as u32 * 700} word={w}/>
+                       <WordContainer delay={i as u32 * 100} word={w}/>
                    }}).collect::<Html>()
                 }
             </div>
