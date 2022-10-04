@@ -1,6 +1,8 @@
 use gloo::timers::callback::Timeout;
 use yew::{classes, function_component, html, use_effect_with_deps, use_state, Html, Properties};
 
+mod pages;
+
 #[derive(Properties, PartialEq)]
 struct WordContainerProps {
     pub word: String,
