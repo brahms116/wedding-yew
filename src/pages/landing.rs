@@ -8,13 +8,13 @@ fn splash() -> Html {
 
     html! {
         <div class="w-screen h-screen flex justify-center items-center max-w-full">
-            <div class="flex flex-wrap w-2/5 justify-center">
-                {
-                   words.into_iter().enumerate().map( |(i,w)|{html!{
-                       <WordContainer delay={i as u32 * 100} word={w}/>
-                   }}).collect::<Html>()
-                }
-            </div>
+            <ScrollOpacity class={"flex flex-wrap w-2/5 justify-center"}>
+                    {
+                       words.into_iter().enumerate().map( |(i,w)|{html!{
+                           <WordContainer delay={i as u32 * 100} word={w}/>
+                       }}).collect::<Html>()
+                    }
+            </ScrollOpacity>
         </div>
     }
 }

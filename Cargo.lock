@@ -599,6 +599,9 @@ name = "yew"
 version = "0.1.0"
 dependencies = [
  "gloo 0.8.0",
+ "gloo-events",
+ "gloo-utils",
+ "web-sys",
  "yew 0.19.3",
  "yew-router",
 ]
