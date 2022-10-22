@@ -1,6 +1,7 @@
+use web_sys::Element;
 use yew::{
-    function_component, html, use_effect_with_deps, use_state, Children, ContextProvider,
-    Properties,
+    function_component, html, use_context, use_effect_with_deps, use_state, Children,
+    ContextProvider, NodeRef, Properties,
 };
 
 #[derive(Debug, Clone, PartialEq, Properties)]
@@ -67,5 +68,37 @@ pub fn window_provider(props: &WindowProviderProps) -> Html {
         <ContextProvider<WindowInfo> context={(*state).clone()}>
             {for props.children.iter()}
         </ContextProvider<WindowInfo>>
+    }
+}
+
+pub struct ElementWindowInfoHook {
+    pub relative_y: f64,
+    pub window_height: f64,
+}
+
+pub fn use_element_window_info(element: &NodeRef) -> ElementWindowInfoHook {
+    let ctx = use_context::<WindowInfo>().expect("There should be scroll context");
+    let relative_y = use_state(|| 0.0);
+    let y_return = *relative_y;
+    let height_return = ctx.clone().height;
+    let y_on_change = relative_y.clone();
+    let ref_effect_dep = element.clone();
+    let ref_height_calc = element.clone();
+
+    use_effect_with_deps(
+        move |_| {
+            let element = ref_height_calc
+                .cast::<Element>()
+                .expect("Html element should be element");
+            let element_y = element.get_bounding_client_rect().y();
+            y_on_change.set(element_y);
+            || {}
+        },
+        (ctx.scroll_height, ctx.height, ref_effect_dep),
+    );
+
+    ElementWindowInfoHook {
+        relative_y: y_return,
+        window_height: height_return,
     }
 }

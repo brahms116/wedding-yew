@@ -1,61 +1,47 @@
 use crate::components::*;
-use web_sys::{Element, HtmlElement};
-use yew::{
-    function_component, html, use_context, use_effect_with_deps, use_node_ref, use_state, Children,
-    Properties,
-};
+use web_sys::HtmlElement;
+use yew::{function_component, html, use_effect_with_deps, use_node_ref, Children, Properties};
+
+pub trait OpacityControl: Clone + PartialEq + 'static {
+    fn get_opacity(&self, screen_height: f64, relative_y: f64) -> f64;
+}
 
 #[derive(Properties, PartialEq)]
-pub struct ScrollOpacityProps {
+pub struct ScrollOpacityProps<T: OpacityControl> {
     pub class: String,
 
     #[prop_or_default]
     pub children: Children,
+
+    pub opacity_control: T,
 }
 
 #[function_component(ScrollOpacity)]
-pub fn scroll_opacity(props: &ScrollOpacityProps) -> Html {
-    let ctx = use_context::<WindowInfo>().expect("There should be scroll context");
-    let relative_y = use_state(|| 0.0);
-    let on_change_relative_y = relative_y.clone();
-    let on_change_y = relative_y.clone();
+pub fn scroll_opacity<T: OpacityControl>(props: &ScrollOpacityProps<T>) -> Html {
     let element_ref = use_node_ref();
-    let on_change_ref = element_ref.clone();
-    let calc_height_ref = element_ref.clone();
-    let opacity_ref = element_ref.clone();
-    let opacity_ref_change = element_ref.clone();
+    let element_change_ref = element_ref.clone();
+    let element_opacity_ref = element_ref.clone();
+
+    let hook_info = use_element_window_info(&element_ref);
+    let relative_y = hook_info.relative_y;
+    let height = hook_info.window_height;
+
+    let opacity_control = props.opacity_control.clone();
 
     use_effect_with_deps(
         move |_| {
-            let element = calc_height_ref
-                .cast::<Element>()
-                .expect("Html element should be element");
-            let element_y = element.get_bounding_client_rect().y();
-            on_change_y.set(element_y);
-            || {}
-        },
-        (ctx.scroll_height, ctx.height, on_change_ref),
-    );
-
-    use_effect_with_deps(
-        move |_| {
-            let element = opacity_ref
+            let element = element_opacity_ref
                 .cast::<HtmlElement>()
                 .expect("Html element should be Html Element");
-            if ctx.height != 0.0 {
-                let mut percentage = 2.0 * *relative_y / ctx.height;
-                if percentage > 1.0 {
-                    percentage = 1.0
-                }
-                element
-                    .style()
-                    .set_property("opacity", &format!("{}", percentage))
-                    .expect("Should be able to set opacity");
-            }
+            let percentage = opacity_control.get_opacity(height, relative_y);
+            element
+                .style()
+                .set_property("opacity", &format!("{}", percentage))
+                .expect("Should be able to set opacity");
 
             || {}
         },
-        (on_change_relative_y, ctx.height, opacity_ref_change),
+        (relative_y, height, element_change_ref),
     );
 
     html! {
