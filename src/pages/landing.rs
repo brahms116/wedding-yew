@@ -48,6 +48,7 @@ fn title() -> Html {
 pub fn landing_page() -> Html {
     html! {
         <div>
+            <NavMenu/>
             <Splash/>
             <Title/>
         </div>
