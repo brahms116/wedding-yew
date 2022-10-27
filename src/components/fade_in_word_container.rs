@@ -27,6 +27,6 @@ pub fn word_container(props: &WordContainerProps) -> Html {
     );
 
     html! {
-        <div class={classes!(vec![(*class).clone(),"mr-1 text-2xl".into()])}>{props.word.clone()}</div>
+        <div class={classes!(vec![(*class).clone(),"mr-1 text-xl".into()])}>{props.word.clone()}</div>
     }
 }

@@ -21,9 +21,9 @@ fn switch(routes: &Route) -> Html {
 fn app() -> Html {
     html! {
         <components::WindowProvider>
-        <BrowserRouter>
-            <Switch<Route> render={Switch::render(switch)}/>
-        </BrowserRouter>
+            <BrowserRouter>
+                <Switch<Route> render={Switch::render(switch)}/>
+            </BrowserRouter>
         </components::WindowProvider>
     }
 }
