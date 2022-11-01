@@ -530,6 +530,9 @@ function getImports() {
         const ret = getObject(arg0).y;
         return ret;
     };
+    imports.wbg.__wbg_pushState_38917fb88b4add30 = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4, arg5) {
+        getObject(arg0).pushState(getObject(arg1), getStringFromWasm0(arg2, arg3), arg4 === 0 ? undefined : getStringFromWasm0(arg4, arg5));
+    }, arguments) };
     imports.wbg.__wbg_parentElement_0cffb3ceb0f107bd = function(arg0) {
         const ret = getObject(arg0).parentElement;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
@@ -617,16 +620,16 @@ function getImports() {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper8620 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 594, __wbg_adapter_20);
+    imports.wbg.__wbindgen_closure_wrapper8956 = function(arg0, arg1, arg2) {
+        const ret = makeClosure(arg0, arg1, 633, __wbg_adapter_20);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper12015 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 614, __wbg_adapter_23);
+    imports.wbg.__wbindgen_closure_wrapper12381 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 653, __wbg_adapter_23);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper12093 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 620, __wbg_adapter_26);
+    imports.wbg.__wbindgen_closure_wrapper12459 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 659, __wbg_adapter_26);
         return addHeapObject(ret);
     };
 
@@ -665,7 +668,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('yew-3240a3e01229e8d2_bg.wasm', import.meta.url);
+        input = new URL('yew-ceda16f732ab749a_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
