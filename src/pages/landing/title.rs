@@ -21,7 +21,7 @@ pub fn title() -> Html {
                     </div>
                     <div class="mt-8">
                         <button class="bg-black text-white px-4 py-2 \
-                                        hover:bg-slate-900 min-w-[6rem]
+                                        hover:bg-slate-800 min-w-[6rem]
                         "
                             onclick={on_click}
                         >

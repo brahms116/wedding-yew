@@ -3,6 +3,7 @@ mod navigation;
 mod scroll_opacity;
 mod scroll_y;
 mod window;
+use yew::prelude::*;
 
 pub use fade_in_word_container::*;
 pub use navigation::*;
