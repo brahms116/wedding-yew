@@ -18,9 +18,9 @@ impl OpacityControl for SplashOpacityControl {
 
 #[function_component(Splash)]
 pub fn splash() -> Html {
-    let msg: &str =
-        "Hello, some message should be here, lets make it a super super long message so \
-        that wrapping occurs. Did you know that mia can get really cranky sometimes?";
+    let msg: &str = "
+        Dear Linden and Emma, together with our families, we \
+        joyfully request your company at the celebration of our marriage...";
     let words = msg.split(" ").collect::<Vec<&str>>();
 
     html! {

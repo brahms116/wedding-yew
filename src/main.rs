@@ -1,20 +1,13 @@
+use wedding_site::pages::*;
 use yew::{function_component, html};
 use yew_router::prelude::*;
-
-mod components;
-mod pages;
-
-use components::WindowProvider;
-use pages::{switch, Route};
 
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <WindowProvider>
-            <BrowserRouter>
-                <Switch<Route> render={Switch::render(switch)}/>
-            </BrowserRouter>
-        </WindowProvider>
+        <BrowserRouter>
+            <Switch<Route> render={Switch::render(switch)}/>
+        </BrowserRouter>
     }
 }
 

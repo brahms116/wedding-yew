@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        "bg":"#f6f6f6"
+      },
       fontFamily: {
         sans: ["Cormorant Garamond"],
       },
