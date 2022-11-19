@@ -8,10 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "bg":"#f6f6f6"
+        "bg":"#fafafa"
       },
       fontFamily: {
         sans: ["Cormorant Garamond"],
+        serif: ["Dancing Script"],
       },
       keyframes: {
         fade: {

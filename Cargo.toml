@@ -19,5 +19,7 @@ features = [
   "Node",   
   "Element", 
   "CssStyleDeclaration", 
-  "DomRect"
+  "DomRect",
+  "HtmlVideoElement",
+  "HtmlMediaElement"
 ] 

@@ -89,7 +89,7 @@ where
     let mobile_menu_css = "
         md:hidden fixed top-0 left-0 bg-bg min-h-screen w-full
         flex flex-col justify-center items-center text-sm text-bold
-        transition-transform
+        transition-transform z-10
     ";
 
     let menu_style = if *menu_open {
@@ -136,7 +136,7 @@ where
         <>
             <div class={"
                     fixed top-0 w-full left-0 p-8 flex justify-between h-16 items-center
-                    bg-bg z-10
+                    bg-bg z-20
                 "}
             >
                 <div class={"text-xl cursor-pointer"}>
