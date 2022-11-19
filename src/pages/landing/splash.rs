@@ -1,40 +1,36 @@
 use super::*;
 
-#[derive(PartialEq, Clone)]
-struct SplashOpacityControl();
-
-impl OpacityControl for SplashOpacityControl {
-    fn get_opacity(&self, screen_height: f64, relative_y: f64) -> f64 {
-        if screen_height == 0.0 {
-            return 0.0;
-        }
-        let mut percentage = 2.0 * relative_y / screen_height;
-        if percentage > 1.0 {
-            percentage = 1.0;
-        }
-        percentage
-    }
+#[derive(Properties, PartialEq)]
+pub struct SplashProps {
+    pub on_splash_click: Callback<MouseEvent>,
 }
 
 #[function_component(Splash)]
-pub fn splash() -> Html {
+pub fn splash(props: &SplashProps) -> Html {
     let msg: &str = "
-        Dear Linden and Emma, together with our families, we \
-        joyfully request your company at the celebration of our marriage...";
+        \"We love because he first loved us. ~1 John 4:19~\"
+    ";
     let words = msg.split(" ").collect::<Vec<&str>>();
 
     html! {
-        <div class="w-screen h-screen flex justify-center items-center max-w-full">
-            <ScrollOpacity<SplashOpacityControl>
-                opacity_control={SplashOpacityControl()}
-                class="flex flex-wrap w-2/5 justify-center"
-            >
-                    {
-                       words.into_iter().enumerate().map( |(i,w)|{html!{
-                           <WordContainer delay={i as u32 * 100} word={w}/>
-                       }}).collect::<Html>()
-                    }
-            </ScrollOpacity<SplashOpacityControl>>
+        <div class="
+            w-screen fixed h-screen bg-bg z-20 top-0 flex justify-center
+            items-center flex-col p-8 max-w-full
+        ">
+            <div class="flex flex-wrap max-w-[500px] mb-4 italic justify-center text-xl">
+            {
+               words.into_iter().enumerate().map( |(i,w)|{html!{
+                   <WordContainer delay={i as u32 * 100} word={w}/>
+               }}).collect::<Html>()
+            }
+            </div>
+            <button type="button"
+                onclick={props.on_splash_click.clone()}
+                class="
+                    py-2 px-8 bg-black text-white 
+                    rounded-full
+                "
+            >{"Amen"}</button>
         </div>
     }
 }
