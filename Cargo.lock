@@ -883,6 +883,7 @@ dependencies = [
  "thiserror",
  "tracing",
  "tracing-wasm",
+ "wasm-bindgen-futures",
  "web-sys",
  "yew",
  "yew-router",
