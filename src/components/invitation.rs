@@ -43,12 +43,12 @@ pub struct InviteInfo {
 pub struct InviteProvidedInfo {
     pub invite: Option<InviteInfo>,
     pub set_invite: Callback<Option<InviteInfo>>,
-    pub fetch_func: Callback<&'static str>,
+    pub fetch_func: Callback<String>,
     pub error: Option<ApiError>,
     pub is_loading: bool,
 }
 
-impl ApiResource<InviteInfo, ApiError, &'static str> for InviteProvidedInfo {
+impl ApiResource<InviteInfo, ApiError, String> for InviteProvidedInfo {
     fn data(&self) -> Option<InviteInfo> {
         self.invite.clone()
     }
@@ -57,7 +57,7 @@ impl ApiResource<InviteInfo, ApiError, &'static str> for InviteProvidedInfo {
         self.set_invite.emit(setter(self.data()))
     }
 
-    fn fetch(&self, params: &'static str) {
+    fn fetch(&self, params: String) {
         self.fetch_func.emit(params)
     }
 
@@ -95,14 +95,14 @@ where
         let error_handle = error_handle.clone();
         let fetch_service = props.fetch_service.clone();
         let loading_handle = loading_handle.clone();
-        Callback::from(move |id: &'static str| {
+        Callback::from(move |id: String| {
             let fetch_service = fetch_service.clone();
             let data_handle = data_handle.clone();
             let error_handle = error_handle.clone();
             let loading_handle = loading_handle.clone();
             spawn_local(async move {
                 loading_handle.set(true);
-                let response = fetch_service.fetch_invite(id).await;
+                let response = fetch_service.fetch_invite(&id).await;
                 if let Ok(invite) = response {
                     data_handle.set(Some(InviteInfo {
                         invite: Some(invite),
@@ -140,4 +140,58 @@ where
             {for props.children.iter()}
         </ContextProvider<InviteProvidedInfo>>
     }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct UrlQuery {
+    pub id: Option<String>,
+}
+
+pub fn use_invitation<T>(route: Option<T>) -> InviteProvidedInfo
+where
+    T: 'static + Routable,
+{
+    let location = use_location().expect("Should have location");
+    let history = use_history().expect("Should have history");
+    let query = location
+        .query::<UrlQuery>()
+        .expect("Url params should be deserializable");
+
+    debug!(url_query = ?query);
+    let info = use_context::<InviteProvidedInfo>().expect("Context should be provided");
+
+    {
+        let route = route.clone();
+        if let None = query.id {
+            if let Some(route) = route {
+                history.push(route);
+            }
+        }
+    }
+
+    if let Some(info) = info.data() {
+        if let None = info.invite {
+            if let Some(route) = route {
+                history.push(route);
+            }
+        }
+    }
+
+    {
+        let info = info.clone();
+        let id = query.id.clone();
+        use_effect_with_deps(
+            move |_| {
+                if let None = info.data() {
+                    if let Some(id) = id {
+                        info.fetch(id)
+                    }
+                }
+                || {}
+            },
+            (),
+        )
+    }
+
+    info
 }
