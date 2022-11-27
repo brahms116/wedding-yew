@@ -14,7 +14,7 @@ pub fn landing_page() -> Html {
     let vid_ref_passed = vid_ref.clone();
     let vid_ref_process = vid_ref.clone();
 
-    let invite_info = use_invitation::<Route>(None);
+    let user_id = use_query_id();
 
     let on_click = Callback::from(move |_: MouseEvent| {
         accept_set.set(true);

@@ -148,51 +148,11 @@ pub struct UrlQuery {
 }
 
 #[hook]
-pub fn use_invitation<T>(route: Option<T>) -> InviteProvidedInfo
-where
-    T: 'static + Routable,
-{
+pub fn use_query_id() -> Option<String> {
     let location = use_location().expect("Should have location");
-    let navigator = use_navigator().expect("Should have history");
     let query = location
         .query::<UrlQuery>()
         .expect("Url params should be deserializable");
-
     debug!(url_query = ?query);
-    let info = use_context::<InviteProvidedInfo>().expect("Context should be provided");
-
-    {
-        let route = route.clone();
-        if let None = query.id {
-            if let Some(route) = route {
-                navigator.push(&route);
-            }
-        }
-    }
-
-    if let Some(info) = info.data() {
-        if let None = info.invite {
-            if let Some(route) = route {
-                navigator.push(&route);
-            }
-        }
-    }
-
-    {
-        let info = info.clone();
-        let id = query.id.clone();
-        use_effect_with_deps(
-            move |_| {
-                if let None = info.data() {
-                    if let Some(id) = id {
-                        info.fetch(id)
-                    }
-                }
-                || {}
-            },
-            (),
-        )
-    }
-
-    info
+    query.id
 }
