@@ -17,7 +17,7 @@ pub enum Route {
 ///
 /// # Returns
 /// Html component to render
-pub fn switch(routes: &Route) -> Html {
+pub fn switch(routes: Route) -> Html {
     match routes {
         Route::Landing => html! {<landing::LandingPage/>},
         Route::RSVP => html! {<rsvp::RSVPPage/>},

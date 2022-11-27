@@ -4,6 +4,6 @@ use wedding_site::App;
 
 fn main() {
     tracing_wasm::set_as_global_default();
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
     info!("Yew app mounted");
 }

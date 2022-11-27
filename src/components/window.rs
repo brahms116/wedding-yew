@@ -1,8 +1,5 @@
+use super::*;
 use web_sys::Element;
-use yew::{
-    function_component, html, use_context, use_effect_with_deps, use_state, Children,
-    ContextProvider, NodeRef, Properties,
-};
 
 #[derive(Debug, Clone, PartialEq, Properties)]
 pub struct WindowInfo {
@@ -76,6 +73,7 @@ pub struct ElementWindowInfoHook {
     pub window_height: f64,
 }
 
+#[hook]
 pub fn use_element_window_info(element: &NodeRef) -> ElementWindowInfoHook {
     let ctx = use_context::<WindowInfo>().expect("There should be scroll context");
     let relative_y = use_state(|| 0.0);

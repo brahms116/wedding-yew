@@ -1,5 +1,5 @@
+use super::*;
 use gloo::timers::callback::Timeout;
-use yew::{classes, function_component, html, use_effect_with_deps, use_state, Properties};
 
 #[derive(Properties, PartialEq)]
 pub struct WordContainerProps {

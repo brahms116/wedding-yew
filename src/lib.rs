@@ -4,7 +4,7 @@ pub mod pages;
 
 use components::{FetchService, InviteProvider, WeddingDayProvider};
 use pages::{switch, Route};
-use yew::{function_component, html};
+use yew::{function_component, html, Html};
 use yew_router::prelude::*;
 
 #[function_component(App)]
@@ -17,7 +17,7 @@ pub fn app() -> Html {
         >
             <InviteProvider<FetchService> fetch_service={fetch_service}>
                 <BrowserRouter>
-                    <Switch<Route> render={Switch::render(switch)}/>
+                    <Switch<Route> render={switch}/>
                 </BrowserRouter>
             </InviteProvider<FetchService>>
         </WeddingDayProvider>

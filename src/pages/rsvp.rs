@@ -1,4 +1,4 @@
-use yew::{function_component, html};
+use super::*;
 
 #[function_component(RSVPPage)]
 pub fn rsvp_page() -> Html {

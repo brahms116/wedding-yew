@@ -1,4 +1,4 @@
-use yew::{function_component, html, use_node_ref};
+use super::*;
 
 #[function_component(ScrollY)]
 pub fn scroll_y() -> Html {
