@@ -142,7 +142,7 @@ where
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct UrlQuery {
     pub id: Option<String>,
 }

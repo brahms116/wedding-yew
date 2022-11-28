@@ -8,6 +8,8 @@ pub enum Route {
     Landing,
     #[at("/rsvp")]
     RSVP,
+    #[at("/LiveStream")]
+    LiveStream,
 }
 
 /// Switch function to pass into yew router to determine which component to render

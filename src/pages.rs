@@ -5,5 +5,7 @@ use yew_router::prelude::*;
 mod landing;
 mod route;
 mod rsvp;
+mod utils;
 
 pub use route::*;
+use utils::*;

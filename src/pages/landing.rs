@@ -1,13 +1,17 @@
 mod splash;
+mod state;
 
 use super::*;
 use splash::*;
+use state::*;
 use web_sys::HtmlVideoElement;
 
 #[function_component(LandingPage)]
 pub fn landing_page() -> Html {
     let accept = use_state(|| false);
     let accept_set = accept.clone();
+
+    let state = use_reducer(LandingState::default);
 
     let vid_ref = use_node_ref();
 
