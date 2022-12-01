@@ -8,7 +8,7 @@ use super::*;
 ///
 /// # Generics
 /// T - Route type of the application
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum NavDestination<T>
 where
     T: Routable,
