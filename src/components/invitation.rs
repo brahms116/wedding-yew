@@ -21,6 +21,16 @@ pub struct Invitation {
     pub dependents: Vec<Invitee>,
 }
 
+impl Invitation {
+    pub fn get_fnames(&self) -> Vec<String> {
+        let mut result = vec![self.primary_invitee.fname.clone()];
+        for i in &self.dependents {
+            result.push(i.fname.clone());
+        }
+        result
+    }
+}
+
 pub trait ApiResource<T, E, P>
 where
     T: 'static + Send + Sync,
