@@ -10,6 +10,8 @@ pub enum Route {
     RSVP,
     #[at("/faq")]
     FAQ,
+    #[at("/story")]
+    Story,
 }
 
 /// Switch function to pass into yew router to determine which component to render
@@ -24,5 +26,6 @@ pub fn switch(routes: Route) -> Html {
         Route::Landing => html! {<landing::LandingPage/>},
         Route::RSVP => html! {<rsvp::RSVPPage/>},
         Route::FAQ => html! {<rsvp::RSVPPage/>},
+        Route::Story => html! {<rsvp::RSVPPage/>},
     }
 }
