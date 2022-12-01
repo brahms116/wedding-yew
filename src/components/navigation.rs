@@ -4,6 +4,31 @@ use web_sys::HtmlElement;
 
 use super::*;
 
+/// A destination to route to
+///
+/// # Generics
+/// T - Route type of the application
+#[derive(PartialEq, Debug)]
+pub enum NavDestination<T>
+where
+    T: Routable,
+{
+    /// An in-app route
+    App(T),
+
+    /// An external url
+    External(String),
+}
+
+impl<T> Default for NavDestination<T>
+where
+    T: Routable,
+{
+    fn default() -> Self {
+        Self::External(String::from("/"))
+    }
+}
+
 /// Props for [NavLink]
 ///
 /// # Generics
