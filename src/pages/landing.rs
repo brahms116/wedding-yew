@@ -1,7 +1,9 @@
+mod copy;
 mod splash;
 mod state;
 
 use super::*;
+use copy::*;
 use splash::*;
 use state::*;
 use web_sys::HtmlVideoElement;
