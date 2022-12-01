@@ -3,23 +3,12 @@ use super::*;
 pub enum LandingStateAction {
     Loading,
     AcceptSplash,
-    Today(String),
+    Today(String, String),
     Coming(String),
     Passed(String),
-    TodayInvited(String, Invitation),
+    TodayInvited(String, String, Invitation),
     ComingInvited(String, Invitation),
     PassInvited(String, Invitation),
-}
-
-pub enum CtaButtonRoute {
-    Route(Route),
-    Link(String),
-}
-
-impl Default for CtaButtonRoute {
-    fn default() -> Self {
-        Self::Route(Route::Landing)
-    }
 }
 
 #[derive(Default)]
@@ -27,8 +16,8 @@ pub struct LandingState {
     pub enter_button_loading: bool,
     pub splash_accepted: bool,
     pub cta_button_text: String,
-    pub cta_button_route: CtaButtonRoute,
-    pub nav_menu_items: Vec<(Route, String)>,
+    pub cta_button_route: NavDestination<Route>,
+    pub nav_menu_items: Vec<(NavDestination<Route>, String)>,
     pub title_text: String,
     pub subtitle_text: String,
 }
@@ -65,15 +54,25 @@ mod landing_state_test {
         let state = LandingState::default();
         let state = Reducible::reduce(
             std::rc::Rc::new(state),
-            LandingStateAction::Today("abc".into()),
+            LandingStateAction::Today("www.google.com".into(), "abc".into()),
         );
 
         let items = vec![
-            ()
-        ]
+            (
+                NavDestination::External(String::from("www.google.com")),
+                String::from("Live Stream"),
+            ),
+            (NavDestination::App(Route::FAQ), String::from("FAQ")),
+        ];
 
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.cta_button_text, "Live Stream".to_owned());
-        assert!(matches!(state.cta_button_route, CtaButtonRoute::Link(_)));
+        assert_eq!(
+            state.cta_button_route,
+            NavDestination::External(String::from("www.google.com"))
+        );
+        assert_eq!(state.nav_menu_items, items);
+        assert_eq!(state.title_text, get_today_title());
+        assert_eq!(state.subtitle_text, get_today_subtitle())
     }
 }
