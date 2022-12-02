@@ -1,8 +1,10 @@
+mod controller;
 mod copy;
 mod splash;
 mod state;
 
 use super::*;
+use controller::*;
 use copy::*;
 use splash::*;
 use state::*;
