@@ -11,7 +11,7 @@ pub fn get_coming_title() -> String {
 }
 
 pub fn get_coming_subtitle() -> String {
-    String::from("")
+    String::from("Together with our families, we joyfully request your company at the celebration of our marriage")
 }
 
 pub fn get_passed_title() -> String {
@@ -35,7 +35,7 @@ pub fn get_coming_invited_title(names: Vec<String>) -> String {
 }
 
 pub fn get_coming_invited_subtitle() -> String {
-    String::from("")
+    String::from("Together with our families, we joyfully request your company at the celebration of our marriage")
 }
 
 pub fn get_passed_invited_title(names: Vec<String>) -> String {

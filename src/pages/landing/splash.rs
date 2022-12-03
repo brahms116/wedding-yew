@@ -1,8 +1,9 @@
 use super::*;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Clone)]
 pub struct SplashProps {
     pub on_splash_click: Callback<MouseEvent>,
+    pub is_loading: bool,
 }
 
 #[function_component(Splash)]
@@ -11,6 +12,21 @@ pub fn splash(props: &SplashProps) -> Html {
         \"We love because he first loved us. ~1 John 4:19~\"
     ";
     let words = msg.split(" ").collect::<Vec<&str>>();
+
+    let label = if props.is_loading {
+        "Loading..."
+    } else {
+        "Amen"
+    };
+
+    let onclick = {
+        let props = (*props).clone();
+        Callback::from(move |e: MouseEvent| {
+            if !props.is_loading {
+                props.on_splash_click.emit(e);
+            }
+        })
+    };
 
     html! {
         <div class="
@@ -25,12 +41,13 @@ pub fn splash(props: &SplashProps) -> Html {
             }
             </div>
             <button type="button"
-                onclick={props.on_splash_click.clone()}
+                onclick={onclick}
                 class="
                     py-2 px-8 bg-black text-white 
+                    animate-fade-slow
                     rounded-full
                 "
-            >{"Amen"}</button>
+            >{label}</button>
         </div>
     }
 }

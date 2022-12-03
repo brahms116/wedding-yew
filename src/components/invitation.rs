@@ -118,9 +118,10 @@ where
                         invite: Some(invite),
                     }))
                 } else if let Err(ApiError::NotInvited(_)) = response {
-                    data_handle.set(None);
+                    data_handle.set(Some(InviteInfo { invite: None }));
                 } else {
                     let err = response.expect_err("Should have matched all other possibilities");
+                    data_handle.set(Some(InviteInfo { invite: None }));
                     error_handle.set(Some(err))
                 }
                 loading_handle.set(false);

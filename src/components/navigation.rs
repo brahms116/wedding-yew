@@ -39,7 +39,7 @@ where
     T: Routable + 'static,
 {
     /// The route the link links to
-    route: T,
+    route: NavDestination<T>,
     /// The label of the link
     label: String,
     /// Whether to apply mobile styling
@@ -59,12 +59,22 @@ where
     T: Routable + 'static,
 {
     let class = if props.is_mobile { "mb-8" } else { "ml-8" };
-    html! {
-        <div class={format!("{} hover:text-slate-400",class)}>
-            <Link<T> to={props.route.clone()}>
-                {props.label.clone()}
-            </Link<T>>
-        </div>
+    if let NavDestination::App(route) = props.route.clone() {
+        html! {
+            <div class={format!("{} hover:text-slate-400",class)}>
+                <Link<T> to={route}>
+                    {props.label.clone()}
+                </Link<T>>
+            </div>
+        }
+    } else if let NavDestination::External(link) = props.route.clone() {
+        html! {
+            <div class={format!("{} hover:text-slate-400",class)}>
+                    <a href={link}>{props.label.clone()}</a>
+            </div>
+        }
+    } else {
+        html! {}
     }
 }
 
@@ -77,7 +87,7 @@ pub struct NavMenuProps<T>
 where
     T: Eq + 'static + Hash + Routable + Default,
 {
-    pub routes: Vec<(T, String)>,
+    pub routes: Vec<(NavDestination<T>, String)>,
 }
 
 /// Navigation menu for the application
@@ -96,9 +106,11 @@ where
 
     let current_route = use_route::<T>();
 
-    let is_same_route = |route: &T| -> bool {
-        if let Some(current_route) = current_route {
-            return *route == current_route;
+    let is_same_route = |route: &NavDestination<T>| -> bool {
+        if let NavDestination::App(route) = route {
+            if let Some(current_route) = current_route {
+                return *route == current_route;
+            }
         }
         false
     };

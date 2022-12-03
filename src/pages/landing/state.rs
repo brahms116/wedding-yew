@@ -1,3 +1,5 @@
+use tracing::debug;
+
 use super::*;
 
 #[derive(PartialEq, Debug)]
@@ -12,7 +14,7 @@ pub enum LandingStateAction {
     PassInvited(String, Invitation),
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct LandingState {
     pub enter_button_loading: bool,
     pub splash_accepted: bool,
@@ -26,7 +28,7 @@ pub struct LandingState {
 
 impl LandingState {
     fn format_wedding_date_str(date_str: String) -> String {
-        format!("{} UTC+10", date_str)
+        format!("{}", date_str)
     }
     pub fn loading(&mut self) {
         self.enter_button_loading = true;
@@ -116,6 +118,7 @@ impl Reducible for LandingState {
 
     fn reduce(self: std::rc::Rc<Self>, action: Self::Action) -> std::rc::Rc<Self> {
         let mut state = (*self).clone();
+        debug!(landing_state_action_called = ?action);
         match action {
             LandingStateAction::Loading => state.loading(),
             LandingStateAction::AcceptSplash => state.accept_splash(),
@@ -132,6 +135,7 @@ impl Reducible for LandingState {
                 state.passed_invited(date_str, invite)
             }
         };
+        debug!(new_landing_state = ?state);
         std::rc::Rc::new(state)
     }
 }
@@ -248,7 +252,7 @@ mod landing_state_test {
         let items: Vec<(NavDestination<Route>, String)> = vec![];
 
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         // TODO: add test to faq page
         assert_eq!(state.nav_menu_items, items);
         assert_eq!(state.title_text, get_coming_title());
@@ -266,7 +270,7 @@ mod landing_state_test {
         let items = vec![(NavDestination::App(Route::RSVP), String::from("RSVP"))];
 
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         assert_eq!(state.cta_button_text, "RSVP".to_owned());
         assert_eq!(state.cta_button_route, NavDestination::App(Route::RSVP),);
         assert_eq!(state.nav_menu_items, items);
@@ -308,7 +312,7 @@ mod landing_state_test {
         let items: Vec<(NavDestination<Route>, String)> = vec![];
 
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         // TODO: add test to story page
         assert_eq!(state.nav_menu_items, items);
         assert_eq!(state.title_text, get_passed_title());

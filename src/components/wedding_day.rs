@@ -28,6 +28,7 @@ pub struct WeddingDayInfo {
 pub fn wedding_day_provider(props: &WeddingDayProviderProps) -> Html {
     debug!(WeddingDayProviderProps = ?props);
     let now = Utc::now();
+    debug!(?now);
     let status = get_wedding_day_status(&props.wedding_datetime, &now, &props.utc_offset);
     let with_offset = props.wedding_datetime + props.utc_offset;
     let datetime_str = format!("{} UTC+10", with_offset.format("%d.%m.%Y %-l%p"));

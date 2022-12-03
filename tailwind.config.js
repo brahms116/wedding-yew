@@ -22,6 +22,7 @@ module.exports = {
       },
       animation: {
         fade: "fade 0.5s linear",
+        "fade-slow": "fade 1s linear",
       },
     },
   },
