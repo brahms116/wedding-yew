@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(PartialEq, Debug)]
 pub enum LandingStateAction {
     Loading,
     AcceptSplash,
