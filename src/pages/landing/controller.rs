@@ -21,8 +21,8 @@ where
     D: 'static + Clone + Dispatch<LandingStateAction>,
     R: 'static + Clone + ApiResource<InviteInfo, ApiError, String>,
 {
-    pub fn init(&self) {
-        self.dispatch.send(LandingStateAction::Loading)
+    pub fn init(&self, id: Option<&str>) {
+        self.dispatch.send(LandingStateAction::Loading);
     }
 }
 
@@ -47,19 +47,25 @@ mod landing_controller_tests {
     }
 
     #[test]
-    fn should_init() {
+    fn should_fresh_init_with_id() {
         let info = WeddingDayInfo {
             relative_day_status: WeddingDayStatus::Coming,
             datetime_str: String::default(),
         };
-
         let mut dispatch = MockObject::new();
-        let resource = MockObject::new();
-
+        let mut resource = MockObject::new();
+        let id = "user_id";
         dispatch
             .expect_send()
             .times(1)
             .with(predicate::eq(LandingStateAction::Loading))
+            .return_const(());
+
+        resource.expect_data().times(1).return_const(None);
+        resource
+            .expect_fetch()
+            .with(predicate::eq(String::from(id)))
+            .times(1)
             .return_const(());
 
         let controller = LandingPageController {
@@ -68,6 +74,6 @@ mod landing_controller_tests {
             wedding_day_info: info,
             invitation_resource: resource,
         };
-        controller.init();
+        controller.init(Some(id));
     }
 }
