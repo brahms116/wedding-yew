@@ -107,7 +107,7 @@ pub fn landing_page() -> Html {
         let on_cta_click = on_cta_click.clone();
         html! {
             <div class="bg-bg">
-                <NavMenu<Route> routes={(*state).nav_menu_items.clone()}/>
+                <NavMenu<Route> routes={state.nav_menu_items.clone()}/>
                 if !state.splash_accepted {
                     <Splash
                         on_splash_click={on_click}
@@ -141,7 +141,7 @@ pub fn landing_page() -> Html {
                             {"Ann St Presbyterian"}
                         </div>
                         <div class="text-[1.125rem] mb-6">
-                            {(*state).wedding_date_time_text.clone()}
+                            {state.wedding_date_time_text.clone()}
                         </div>
                         <div>
                             <button type="button"
