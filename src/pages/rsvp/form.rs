@@ -52,7 +52,7 @@ pub fn form(props: &FormProps) -> Html {
                     <textarea
                         id="dietary-requirements"
                         class="
-                            w-[400px] bg-bg h-[84px] border
+                            w-[100%] max-w-[400px] bg-bg h-[84px] border
                             border-solid
                             resize-none
                             rounded-[2px]

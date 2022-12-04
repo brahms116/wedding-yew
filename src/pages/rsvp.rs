@@ -15,7 +15,7 @@ pub fn rsvp_page() -> Html {
         <div>
             <NavMenu<Route> routes={vec![]}/>
             <div
-                class={"flex flex-col my-[159px] pl-[142px]"}
+                class={"flex flex-col my-[130px] px-[32px] max-w-[100%] md:px-[132px]"}
             >
                 <div
                     class={"text-[72px] mb-[56px]"}
