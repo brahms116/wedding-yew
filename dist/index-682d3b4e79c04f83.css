@@ -1,0 +1,32 @@
+
+* {
+ margin:0;
+ box-sizing:border-box;
+}
+
+html {
+  background: #fafafa;
+  overflow-x: hidden;
+}
+
+video { 
+  transform-origin: top center;
+  transform: scale(1.4);
+}
+
+
+.radio-label:before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: #000000 1px solid;
+  border-radius: 100%;
+  position: relative;
+  display: inline-block;
+  margin-right: 12px;
+  top: 2px;
+}
+
+input[type="radio"]:checked + .radio-label:before {
+  background:#000000;
+}
