@@ -2,7 +2,7 @@ mod components;
 mod config;
 pub mod pages;
 
-use components::{FetchService, InviteProvider, WeddingDayProvider};
+use components::{FetchService, InviteProvider, LiveStreamServiceProvider, WeddingDayProvider};
 use pages::{switch, Route};
 use yew::{function_component, html, Html};
 use yew_router::prelude::*;
@@ -15,11 +15,13 @@ pub fn app() -> Html {
             utc_offset={config::get_utc_offset()}
             wedding_datetime={config::get_wedding_day()}
         >
-            <InviteProvider<FetchService> fetch_service={fetch_service}>
-                <BrowserRouter>
-                    <Switch<Route> render={switch}/>
-                </BrowserRouter>
-            </InviteProvider<FetchService>>
+            <LiveStreamServiceProvider live_stream_url={config::get_live_stream_url()}>
+                <InviteProvider<FetchService> fetch_service={fetch_service}>
+                    <BrowserRouter>
+                        <Switch<Route> render={switch}/>
+                    </BrowserRouter>
+                </InviteProvider<FetchService>>
+            </LiveStreamServiceProvider>
         </WeddingDayProvider>
     }
 }

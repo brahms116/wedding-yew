@@ -22,6 +22,9 @@ pub fn landing_page() -> Html {
         use_context::<InviteProvidedInfo>().expect("Invitation service should be provided");
     let navigator = use_navigator().expect("Navigator shoule exist");
 
+    let live_stream_service =
+        use_context::<LiveStreamService>().expect("Live stream service should be provided");
+
     let controller = {
         let dispatch = state.clone();
         let state = (*state).clone();
@@ -32,7 +35,7 @@ pub fn landing_page() -> Html {
             dispatch,
             wedding_day_info: wedding_service,
             invitation_resource: invitation_service,
-            livesteam_url: "https://www.google.com".to_string(),
+            livesteam_url: live_stream_service.0.clone(),
         }
     };
 
@@ -87,11 +90,12 @@ pub fn landing_page() -> Html {
                 navigator
                     .push_with_query(route, &UrlQuery { id: id.clone() })
                     .unwrap();
-            } else {
+            }
+            if let NavDestination::External(ref url) = state.cta_button_route {
                 web_sys::window()
                     .expect("Window should exist")
                     .location()
-                    .assign("https://www.google.com")
+                    .assign(url)
                     .expect("Location should navigate");
             }
         })
