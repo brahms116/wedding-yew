@@ -19,8 +19,7 @@ pub struct LandingState {
     pub enter_button_loading: bool,
     pub splash_accepted: bool,
     pub cta_button_text: String,
-    pub cta_button_route: NavDestination<Route>,
-    pub nav_menu_items: Vec<(NavDestination<Route>, String)>,
+    pub cta_button_route: NavDestination<Route, UrlQuery>,
     pub title_text: String,
     pub subtitle_text: String,
     pub wedding_date_time_text: String,
@@ -41,10 +40,6 @@ impl LandingState {
     }
 
     pub fn today(&mut self, live_stream_url: String, wedding_date_str: String) {
-        self.nav_menu_items = vec![(
-            NavDestination::External(String::from(live_stream_url.clone())),
-            String::from("Live Stream"),
-        )];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Live Stream");
@@ -59,10 +54,6 @@ impl LandingState {
         wedding_date_str: String,
         invite: Invitation,
     ) {
-        self.nav_menu_items = vec![(
-            NavDestination::External(String::from(live_stream_url.clone())),
-            String::from("Live Stream"),
-        )];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Live Stream");
@@ -72,27 +63,29 @@ impl LandingState {
     }
 
     pub fn coming(&mut self, wedding_date_str: String) {
-        self.nav_menu_items = vec![];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
-        self.cta_button_text = String::from("FAQ");
-        self.cta_button_route = NavDestination::App(Route::FAQ);
+        self.cta_button_text = String::from("Our Story");
+        self.cta_button_route = NavDestination::App(Route::Story);
         self.title_text = get_coming_title();
         self.subtitle_text = get_coming_subtitle();
     }
 
     pub fn coming_invited(&mut self, wedding_date_str: String, invite: Invitation) {
-        self.nav_menu_items = vec![(NavDestination::App(Route::RSVP), String::from("RSVP"))];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("RSVP");
-        self.cta_button_route = NavDestination::App(Route::RSVP);
+        self.cta_button_route = NavDestination::AppWithQuery(
+            Route::RSVP,
+            UrlQuery {
+                id: Some(invite.primary_invitee.id.clone()),
+            },
+        );
         self.title_text = get_coming_invited_title(invite.get_fnames());
         self.subtitle_text = get_coming_invited_subtitle();
     }
 
     pub fn passed(&mut self, wedding_date_str: String) {
-        self.nav_menu_items = vec![];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Our Story");
@@ -102,11 +95,15 @@ impl LandingState {
     }
 
     pub fn passed_invited(&mut self, wedding_date_str: String, invite: Invitation) {
-        self.nav_menu_items = vec![];
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Our Story");
-        self.cta_button_route = NavDestination::App(Route::Story);
+        self.cta_button_route = NavDestination::AppWithQuery(
+            Route::Story,
+            UrlQuery {
+                id: Some(invite.primary_invitee.id.clone()),
+            },
+        );
         self.title_text = get_passed_invited_title(invite.get_fnames());
         self.subtitle_text =
             get_passed_invited_subtitle(invite.primary_invitee.rsvp.unwrap_or(false));
@@ -196,20 +193,13 @@ mod landing_state_test {
             LandingStateAction::Today("www.google.com".into(), "abc".into()),
         );
 
-        let items = vec![(
-            NavDestination::External(String::from("www.google.com")),
-            String::from("Live Stream"),
-        )];
-
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         assert_eq!(state.cta_button_text, "Live Stream".to_owned());
         assert_eq!(
             state.cta_button_route,
             NavDestination::External(String::from("www.google.com"))
         );
-        assert_eq!(state.nav_menu_items, items);
-        assert_eq!(state.title_text, get_today_title());
         assert_eq!(state.subtitle_text, get_today_subtitle())
     }
 
@@ -221,19 +211,13 @@ mod landing_state_test {
             LandingStateAction::TodayInvited("www.google.com".into(), "abc".into(), invite()),
         );
 
-        let items = vec![(
-            NavDestination::External(String::from("www.google.com")),
-            String::from("Live Stream"),
-        )];
-
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         assert_eq!(state.cta_button_text, "Live Stream".to_owned());
         assert_eq!(
             state.cta_button_route,
             NavDestination::External(String::from("www.google.com"))
         );
-        assert_eq!(state.nav_menu_items, items);
         assert_eq!(
             state.title_text,
             get_today_invited_title(vec!["Joe".into(), "Dane".into(), "Jane".into()])
@@ -249,12 +233,8 @@ mod landing_state_test {
             LandingStateAction::Coming("abc".into()),
         );
 
-        let items: Vec<(NavDestination<Route>, String)> = vec![];
-
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.wedding_date_time_text, String::from("abc"));
-        // TODO: add test to faq page
-        assert_eq!(state.nav_menu_items, items);
         assert_eq!(state.title_text, get_coming_title());
         assert_eq!(state.subtitle_text, get_coming_subtitle())
     }
@@ -267,13 +247,18 @@ mod landing_state_test {
             LandingStateAction::ComingInvited("abc".into(), invite()),
         );
 
-        let items = vec![(NavDestination::App(Route::RSVP), String::from("RSVP"))];
-
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.wedding_date_time_text, String::from("abc"));
         assert_eq!(state.cta_button_text, "RSVP".to_owned());
-        assert_eq!(state.cta_button_route, NavDestination::App(Route::RSVP),);
-        assert_eq!(state.nav_menu_items, items);
+        assert_eq!(
+            state.cta_button_route,
+            NavDestination::AppWithQuery(
+                Route::RSVP,
+                UrlQuery {
+                    id: Some("a".into())
+                }
+            ),
+        );
         assert_eq!(
             state.title_text,
             get_coming_invited_title(vec!["Joe".into(), "Dane".into(), "Jane".into()])
@@ -289,11 +274,8 @@ mod landing_state_test {
             LandingStateAction::PassInvited("abc".into(), invite()),
         );
 
-        let items = vec![];
-        //TODO: Add pages for our story
         assert_eq!(state.enter_button_loading, false);
-        assert_eq!(state.wedding_date_time_text, String::from("abc UTC+10"));
-        assert_eq!(state.nav_menu_items, items);
+        assert_eq!(state.wedding_date_time_text, String::from("abc"));
         assert_eq!(
             state.title_text,
             get_passed_invited_title(vec!["Joe".into(), "Dane".into(), "Jane".into()])
@@ -309,12 +291,8 @@ mod landing_state_test {
             LandingStateAction::Passed("abc".into()),
         );
 
-        let items: Vec<(NavDestination<Route>, String)> = vec![];
-
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.wedding_date_time_text, String::from("abc"));
-        // TODO: add test to story page
-        assert_eq!(state.nav_menu_items, items);
         assert_eq!(state.title_text, get_passed_title());
         assert_eq!(state.subtitle_text, get_passed_subtitle())
     }

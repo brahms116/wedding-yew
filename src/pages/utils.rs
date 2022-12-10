@@ -10,6 +10,16 @@ where
     fn goto(&self, route: T, id: Option<String>);
 }
 
+pub trait SetState<T> {
+    fn set(&self, new_item: T);
+}
+
+impl<T> SetState<T> for UseStateHandle<T> {
+    fn set(&self, new_item: T) {
+        self.set(new_item);
+    }
+}
+
 impl<T> RoutePage<T> for Navigator
 where
     T: Routable,

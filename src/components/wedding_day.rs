@@ -24,6 +24,21 @@ pub struct WeddingDayInfo {
     pub datetime_str: String,
 }
 
+pub trait WeddingDayService {
+    fn get_relative_day_status(&self) -> &WeddingDayStatus;
+    fn get_datetime_str(&self) -> &str;
+}
+
+impl WeddingDayService for WeddingDayInfo {
+    fn get_relative_day_status(&self) -> &WeddingDayStatus {
+        &self.relative_day_status
+    }
+
+    fn get_datetime_str(&self) -> &str {
+        &self.datetime_str
+    }
+}
+
 #[function_component(WeddingDayProvider)]
 pub fn wedding_day_provider(props: &WeddingDayProviderProps) -> Html {
     debug!(WeddingDayProviderProps = ?props);

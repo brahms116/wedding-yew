@@ -23,10 +23,23 @@ where
 {
     pub fn loading(&self) -> bool {
         match self {
-            AsyncResourceHandle::InitialLoad => true,
-            AsyncResourceHandle::SubsequentLoad(_) => true,
+            Self::InitialLoad => true,
+            Self::SubsequentLoad(_) => true,
             _ => false,
         }
+    }
+
+    pub fn data(&self) -> Option<&T> {
+        match self {
+            Self::Success(d) | Self::SubsequentLoad(d) | Self::SubsequentErr(.., d) => {
+                return Some(d)
+            }
+            _ => None,
+        }
+    }
+
+    pub fn reset(&mut self) {
+        *self = Self::None
     }
 }
 
@@ -59,33 +72,33 @@ pub struct FetchService(pub String);
 #[async_trait]
 impl InviteApi for FetchService {
     async fn fetch_invite(&self, id: &str) -> Result<Invitation, ApiError> {
-        // Ok(Invitation {
-        //     primary_invitee: Invitee {
-        //         id: "myid".into(),
-        //         fname: "David".into(),
-        //         lname: "Kwong".into(),
-        //         rsvp: None,
-        //         dietary_requirements: "".into(),
-        //     },
-        //     dependents: vec![
-        //         Invitee {
-        //             id: "myid2".into(),
-        //             fname: "Mia".into(),
-        //             lname: "Huang".into(),
-        //             rsvp: None,
-        //             dietary_requirements: "".into(),
-        //         },
-        //         Invitee {
-        //             id: "myid3".into(),
-        //             fname: "William".into(),
-        //             lname: "Kwong".into(),
-        //             rsvp: None,
-        //             dietary_requirements: "".into(),
-        //         },
-        //     ],
-        // })
+        Ok(Invitation {
+            primary_invitee: Invitee {
+                id: "myid".into(),
+                fname: "David".into(),
+                lname: "Kwong".into(),
+                rsvp: Some(true),
+                dietary_requirements: "".into(),
+            },
+            dependents: vec![
+                Invitee {
+                    id: "myid2".into(),
+                    fname: "Mia".into(),
+                    lname: "Huang".into(),
+                    rsvp: None,
+                    dietary_requirements: "My water needs to be warm".into(),
+                },
+                Invitee {
+                    id: "myid3".into(),
+                    fname: "William".into(),
+                    lname: "Kwong".into(),
+                    rsvp: Some(false),
+                    dietary_requirements: "Big portions".into(),
+                },
+            ],
+        })
         // Err(ApiError::NotInvited("myid5".into()))
-        Err(ApiError::FetchFailure("Connecttion failed".into()))
+        // Err(ApiError::FetchFailure("Connection failed".into()))
     }
 
     async fn save_invite(&self, invitation: &Invitation) -> Result<bool, ApiError> {

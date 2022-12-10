@@ -1,4 +1,5 @@
 use gloo_utils::document;
+use serde::Serialize;
 use std::hash::Hash;
 use web_sys::HtmlElement;
 
@@ -8,21 +9,27 @@ use super::*;
 ///
 /// # Generics
 /// T - Route type of the application
+/// Q - The query parameters available
 #[derive(PartialEq, Debug, Clone)]
-pub enum NavDestination<T>
+pub enum NavDestination<T, Q>
 where
     T: Routable,
+    Q: Serialize,
 {
     /// An in-app route
     App(T),
+
+    /// An in-app route with query parameters
+    AppWithQuery(T, Q),
 
     /// An external url
     External(String),
 }
 
-impl<T> Default for NavDestination<T>
+impl<T, Q> Default for NavDestination<T, Q>
 where
     T: Routable,
+    Q: Serialize,
 {
     fn default() -> Self {
         Self::External(String::from("/"))
@@ -33,13 +40,15 @@ where
 ///
 /// # Generics
 /// * T - Is the route type of the application
+/// * Q - Is the available queries for the route
 #[derive(Properties, PartialEq)]
-pub struct NavLinkProps<T>
+pub struct NavLinkProps<T, Q>
 where
     T: Routable + 'static,
+    Q: Serialize + PartialEq + 'static + Clone,
 {
     /// The route the link links to
-    route: NavDestination<T>,
+    route: NavDestination<T, Q>,
     /// The label of the link
     label: String,
     /// Whether to apply mobile styling
@@ -54,14 +63,17 @@ where
 /// # Generics
 /// * T  - Application route type
 #[function_component(NavLink)]
-pub fn nav_link<T>(props: &NavLinkProps<T>) -> Html
+pub fn nav_link<T, Q>(props: &NavLinkProps<T, Q>) -> Html
 where
     T: Routable + 'static,
+    Q: Serialize + PartialEq + 'static + Clone,
 {
     let class = if props.is_mobile { "mb-8" } else { "ml-8" };
+    let navigator = use_navigator().expect("Navigator is missing");
+
     if let NavDestination::App(route) = props.route.clone() {
         html! {
-            <div class={format!("{} hover:text-slate-400",class)}>
+            <div class={format!("{} cursor-pointer hover:text-slate-400",class)}>
                 <Link<T> to={route}>
                     {props.label.clone()}
                 </Link<T>>
@@ -69,8 +81,19 @@ where
         }
     } else if let NavDestination::External(link) = props.route.clone() {
         html! {
-            <div class={format!("{} hover:text-slate-400",class)}>
+            <div class={format!("{} cursor-pointer hover:text-slate-400",class)}>
                     <a href={link}>{props.label.clone()}</a>
+            </div>
+        }
+    } else if let NavDestination::AppWithQuery(route, query) = props.route.clone() {
+        html! {
+            <div
+                onclick={Callback::from(move |_| {
+                    navigator.push_with_query(&route, &query).expect("Navigation failed");
+                })}
+                class={format!("{} cursor-pointer hover:text-slate-400",class)}
+            >
+                {props.label.clone()}
             </div>
         }
     } else {
@@ -83,11 +106,12 @@ where
 /// # Generics
 /// * T - Route type of the application
 #[derive(Properties, PartialEq)]
-pub struct NavMenuProps<T>
+pub struct NavMenuProps<T, Q>
 where
     T: Eq + 'static + Hash + Routable + Default,
+    Q: 'static + PartialEq + Serialize,
 {
-    pub routes: Vec<(NavDestination<T>, String)>,
+    pub routes: Vec<(NavDestination<T, Q>, String)>,
 }
 
 /// Navigation menu for the application
@@ -98,19 +122,23 @@ where
 /// # Generics
 /// * T - Route type of the application
 #[function_component(NavMenu)]
-pub fn nav_menu<T>(props: &NavMenuProps<T>) -> Html
+pub fn nav_menu<T, Q>(props: &NavMenuProps<T, Q>) -> Html
 where
     T: Eq + 'static + Hash + Routable + Default,
+    Q: PartialEq + Serialize + 'static + Clone,
 {
     let menu_open = use_state(|| false);
 
     let current_route = use_route::<T>();
 
-    let is_same_route = |route: &NavDestination<T>| -> bool {
-        if let NavDestination::App(route) = route {
-            if let Some(current_route) = current_route {
-                return *route == current_route;
+    let is_same_route = |route: &NavDestination<T, Q>| -> bool {
+        match route {
+            NavDestination::App(route) | NavDestination::AppWithQuery(route, ..) => {
+                if let Some(current_route) = current_route {
+                    return *route == current_route;
+                }
             }
+            _ => (),
         }
         false
     };
@@ -176,7 +204,7 @@ where
                     bg-bg z-20
                 "}
             >
-                <div class={"text-xl cursor-pointer"}>
+                <div class={"text-xl"}>
                     {"Mia & David"}
                 </div>
                 <div class={desktop_links_css}>
@@ -187,7 +215,7 @@ where
                             .filter(|a|!is_same_route.clone()(&a.0))
                             .map(|(a,b)|{
                                 html!{
-                                    <NavLink<T> route={a} label={b} is_mobile={false}/>
+                                    <NavLink<T,Q> route={a} label={b} is_mobile={false}/>
                                 }
                             }).collect::<Html>()
                     }
@@ -204,7 +232,7 @@ where
                         .filter(|a|!is_same_route.clone()(&a.0))
                         .map(|(a,b)|{
                             html!{
-                                <NavLink<T> route={a} label={b} is_mobile={true}/>
+                                <NavLink<T,Q> route={a} label={b} is_mobile={true}/>
                             }
                         }).collect::<Html>()
                 }

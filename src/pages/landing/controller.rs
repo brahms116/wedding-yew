@@ -1,9 +1,10 @@
+use super::*;
 #[cfg(test)]
 use mockall::predicate::*;
 #[cfg(test)]
 use mockall::*;
-
-use super::*;
+use tracing::error;
+type A<T, E> = AsyncResourceHandle<T, E>;
 
 #[derive(Clone)]
 pub struct LandingPageController<D, R>
@@ -56,30 +57,8 @@ where
         }
     }
 
-    fn send_request(&self, id: &str) {
-        self.dispatch.send(LandingStateAction::Loading);
-        self.invitation_resource.fetch_invite(id);
-    }
-
     fn handle_data(&self, data: &InviteInfo) {
         self.handle_invite(data.invite.clone());
-    }
-
-    pub fn init(&self, id: Option<&str>) {
-        if let None = id {
-            self.handle_invite(None);
-            return;
-        }
-        let id = id.unwrap();
-        let current_invite = self.invitation_resource.invite_data();
-        match current_invite {
-            AsyncResourceHandle::None => self.send_request(id),
-            AsyncResourceHandle::SubsequentErr(.., d)
-            | AsyncResourceHandle::Success(d)
-            | AsyncResourceHandle::SubsequentLoad(d) => self.handle_data(d),
-            // TODO: what about other states
-            _ => {}
-        };
     }
 
     pub fn on_accept(&self) {
@@ -88,17 +67,18 @@ where
         }
     }
 
-    pub fn on_fetch_end(&self) {
-        if let AsyncResourceHandle::Success(d) = self.invitation_resource.invite_data() {
-            self.handle_data(d)
+    pub fn on_fetch_response_change(&self) {
+        match self.invitation_resource.invite_data() {
+            A::Success(d) => self.handle_data(d),
+            A::InitialErr(e) | A::SubsequentErr(e, ..) => {
+                error!("{}", e);
+                self.handle_invite(None)
+            }
+            A::InitialLoad | A::SubsequentLoad(..) => {
+                self.dispatch.send(LandingStateAction::Loading)
+            }
+            A::None => self.handle_invite(None),
         }
-        if let AsyncResourceHandle::SubsequentErr(_, d) = self.invitation_resource.invite_data() {
-            self.handle_data(d)
-        }
-        if let AsyncResourceHandle::InitialErr(_) = self.invitation_resource.invite_data() {
-            self.handle_invite(None)
-        }
-        // TODO, if loading?
     }
 }
 
@@ -111,47 +91,15 @@ mod landing_controller_tests {
             fn send(&self,action:LandingStateAction);
         }
         impl InvitationService for Object {
-            fn invite_data(&self) -> &AsyncResourceHandle<InviteInfo, ApiError>;
+            fn invite_data(&self) -> &A<InviteInfo, ApiError>;
             fn fetch_invite(&self, id: &str);
+            fn save_invite(&self, invite: &Invitation);
+            fn save_response(&self) -> &A<bool, ApiError>;
+            fn reset_save_request(&self);
         }
         impl Clone for Object {
             fn clone(&self)->Self;
         }
-    }
-
-    #[test]
-    fn should_fresh_init_with_id() {
-        let info = WeddingDayInfo {
-            relative_day_status: WeddingDayStatus::Coming,
-            datetime_str: String::default(),
-        };
-        let mut dispatch = MockObject::new();
-        let mut resource = MockObject::new();
-        let id = "user_id";
-        dispatch
-            .expect_send()
-            .times(1)
-            .with(predicate::eq(LandingStateAction::Loading))
-            .return_const(());
-
-        resource
-            .expect_invite_data()
-            .times(1)
-            .return_const(AsyncResourceHandle::None);
-        resource
-            .expect_fetch_invite()
-            .with(predicate::eq(id))
-            .times(1)
-            .return_const(());
-
-        let controller = LandingPageController {
-            current_state: LandingState::default(),
-            dispatch,
-            wedding_day_info: info,
-            invitation_resource: resource,
-            livesteam_url: String::from("livestream_url"),
-        };
-        controller.init(Some(id));
     }
 
     #[test]

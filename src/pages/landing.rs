@@ -14,7 +14,6 @@ use web_sys::HtmlVideoElement;
 #[function_component(LandingPage)]
 pub fn landing_page() -> Html {
     let state = use_reducer(LandingState::default);
-    let user_id = use_query_id();
     let vid_ref = use_node_ref();
     let wedding_service =
         use_context::<WeddingDayInfo>().expect("Wedding service should be provided.");
@@ -24,6 +23,8 @@ pub fn landing_page() -> Html {
 
     let live_stream_service =
         use_context::<LiveStreamService>().expect("Live stream service should be provided");
+
+    let nav_items = use_auth();
 
     let controller = {
         let dispatch = state.clone();
@@ -40,25 +41,12 @@ pub fn landing_page() -> Html {
     };
 
     {
-        let id = user_id.clone();
-        let controller = controller.clone();
-        use_effect_with_deps(
-            move |_| {
-                info!("landing page calling init");
-                controller.init(id.as_ref().map(|e| e.as_str()));
-                || {}
-            },
-            (),
-        )
-    }
-
-    {
         let controller = controller.clone();
         let invitation_service_dep = invitation_service.clone();
         use_effect_with_deps(
             move |_| {
                 info!("landing page calling on_fetch_end");
-                controller.on_fetch_end();
+                controller.on_fetch_response_change();
                 || {}
             },
             vec![invitation_service_dep.invite_data().clone()],
@@ -80,13 +68,13 @@ pub fn landing_page() -> Html {
 
     let on_cta_click = {
         let state = state.clone();
-        let id = use_query_id();
         let navigator = navigator.clone();
         Callback::from(move |_: MouseEvent| {
+            if let NavDestination::AppWithQuery(ref route, ref query) = state.cta_button_route {
+                navigator.push_with_query(route, query).unwrap();
+            }
             if let NavDestination::App(ref route) = state.cta_button_route {
-                navigator
-                    .push_with_query(route, &UrlQuery { id: id.clone() })
-                    .unwrap();
+                navigator.push(route);
             }
             if let NavDestination::External(ref url) = state.cta_button_route {
                 web_sys::window()
@@ -104,7 +92,7 @@ pub fn landing_page() -> Html {
         let on_cta_click = on_cta_click.clone();
         html! {
             <div class="bg-bg">
-                <NavMenu<Route> routes={state.nav_menu_items.clone()}/>
+                <NavMenu<Route, UrlQuery> routes={nav_items}/>
                 if !state.splash_accepted {
                     <Splash
                         on_splash_click={on_click}
