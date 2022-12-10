@@ -19,7 +19,7 @@ pub fn landing_page() -> Html {
     let wedding_service =
         use_context::<WeddingDayInfo>().expect("Wedding service should be provided.");
     let invitation_service =
-        use_context::<InviteProvidedInfo>().expect("Invitation service should be provided");
+        use_context::<InvitationCtxValue>().expect("Invitation service should be provided");
     let navigator = use_navigator().expect("Navigator shoule exist");
 
     let live_stream_service =
@@ -55,16 +55,13 @@ pub fn landing_page() -> Html {
     {
         let controller = controller.clone();
         let invitation_service_dep = invitation_service.clone();
-        let invitation_service = invitation_service.clone();
         use_effect_with_deps(
             move |_| {
-                if let Some(..) = invitation_service.data() {
-                    info!("landing page calling on_fetch_end");
-                    controller.on_fetch_end();
-                }
+                info!("landing page calling on_fetch_end");
+                controller.on_fetch_end();
                 || {}
             },
-            vec![invitation_service_dep.data()],
+            vec![invitation_service_dep.invite_data().clone()],
         )
     }
 

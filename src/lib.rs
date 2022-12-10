@@ -16,7 +16,7 @@ pub fn app() -> Html {
             wedding_datetime={config::get_wedding_day()}
         >
             <LiveStreamServiceProvider live_stream_url={config::get_live_stream_url()}>
-                <InviteProvider<FetchService> fetch_service={fetch_service}>
+                <InviteProvider<FetchService> api_service={fetch_service}>
                     <BrowserRouter>
                         <Switch<Route> render={switch}/>
                     </BrowserRouter>

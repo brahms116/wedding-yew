@@ -1,13 +1,63 @@
+use super::*;
 use async_trait::async_trait;
 use thiserror::Error;
 
-use super::*;
+#[derive(PartialEq, Clone, Debug)]
+pub enum AsyncResourceHandle<T, E>
+where
+    T: 'static + Send + Sync,
+    E: std::error::Error,
+{
+    None,
+    InitialLoad,
+    Success(T),
+    SubsequentLoad(T),
+    InitialErr(E),
+    SubsequentErr(E, T),
+}
+
+impl<T, E> AsyncResourceHandle<T, E>
+where
+    T: 'static + Send + Sync,
+    E: std::error::Error,
+{
+    pub fn loading(&self) -> bool {
+        match self {
+            AsyncResourceHandle::InitialLoad => true,
+            AsyncResourceHandle::SubsequentLoad(_) => true,
+            _ => false,
+        }
+    }
+}
+
+pub trait ApiResource<T, E, P>
+where
+    T: 'static + Send + Sync,
+    E: std::error::Error,
+    P: 'static + Send + Sync,
+{
+    fn data(&self) -> Option<T>;
+    fn set_data(&self, setter: Box<dyn FnOnce(Option<T>) -> Option<T>>);
+    fn fetch(&self, params: P);
+    fn error(&self) -> Option<E>;
+    fn loading(&self) -> bool;
+}
+
+pub trait PersistResource<T, E>
+where
+    T: 'static + Send + Sync,
+    E: std::error::Error,
+{
+    fn save(&self, data: T);
+    fn error(&self) -> Option<E>;
+    fn loading(&self) -> bool;
+}
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct FetchService(pub String);
 
 #[async_trait]
-impl FetchInvite for FetchService {
+impl InviteApi for FetchService {
     async fn fetch_invite(&self, id: &str) -> Result<Invitation, ApiError> {
         // Ok(Invitation {
         //     primary_invitee: Invitee {
@@ -37,6 +87,10 @@ impl FetchInvite for FetchService {
         // Err(ApiError::NotInvited("myid5".into()))
         Err(ApiError::FetchFailure("Connecttion failed".into()))
     }
+
+    async fn save_invite(&self, invitation: &Invitation) -> Result<bool, ApiError> {
+        Ok(true)
+    }
 }
 
 #[derive(Debug, Error, Clone, PartialEq)]
@@ -48,6 +102,8 @@ pub enum ApiError {
 }
 
 #[async_trait]
-pub trait FetchInvite {
+pub trait InviteApi {
     async fn fetch_invite(&self, id: &str) -> Result<Invitation, ApiError>;
+
+    async fn save_invite(&self, invitation: &Invitation) -> Result<bool, ApiError>;
 }

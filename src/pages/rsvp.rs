@@ -1,6 +1,10 @@
+mod controller;
 mod form;
+mod state;
 use super::*;
+use controller::*;
 use form::*;
+use state::*;
 
 #[function_component(RSVPPage)]
 pub fn rsvp_page() -> Html {
@@ -8,8 +12,8 @@ pub fn rsvp_page() -> Html {
         id: "12345".to_string(),
         fname: "David".to_string(),
         lname: "Kwong".to_string(),
-        rsvp: Some(true),
-        dietary_requirements: "".to_string(),
+        rsvp: None,
+        dietary_requirements: "Something not eat this".to_string(),
     };
     html! {
         <div>

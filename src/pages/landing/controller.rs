@@ -9,7 +9,7 @@ use super::*;
 pub struct LandingPageController<D, R>
 where
     D: 'static + Clone + Dispatch<LandingStateAction>,
-    R: 'static + Clone + ApiResource<InviteInfo, ApiError, String>,
+    R: 'static + Clone + InvitationService,
 {
     pub current_state: LandingState,
     pub dispatch: D,
@@ -21,7 +21,7 @@ where
 impl<D, R> LandingPageController<D, R>
 where
     D: 'static + Clone + Dispatch<LandingStateAction>,
-    R: 'static + Clone + ApiResource<InviteInfo, ApiError, String>,
+    R: 'static + Clone + InvitationService,
 {
     fn handle_invite(&self, invite: Option<Invitation>) {
         if let Some(invite) = invite {
@@ -55,30 +55,50 @@ where
             }
         }
     }
+
+    fn send_request(&self, id: &str) {
+        self.dispatch.send(LandingStateAction::Loading);
+        self.invitation_resource.fetch_invite(id);
+    }
+
+    fn handle_data(&self, data: &InviteInfo) {
+        self.handle_invite(data.invite.clone());
+    }
+
     pub fn init(&self, id: Option<&str>) {
         if let None = id {
-            self.handle_invite(None)
-        } else if let Some(data) = self.invitation_resource.data() {
-            self.handle_invite(data.invite)
-        } else {
-            let id = id.unwrap();
-            self.dispatch.send(LandingStateAction::Loading);
-            self.invitation_resource.fetch(id.to_string())
+            self.handle_invite(None);
+            return;
         }
+        let id = id.unwrap();
+        let current_invite = self.invitation_resource.invite_data();
+        match current_invite {
+            AsyncResourceHandle::None => self.send_request(id),
+            AsyncResourceHandle::SubsequentErr(.., d)
+            | AsyncResourceHandle::Success(d)
+            | AsyncResourceHandle::SubsequentLoad(d) => self.handle_data(d),
+            // TODO: what about other states
+            _ => {}
+        };
     }
 
     pub fn on_accept(&self) {
-        if !self.invitation_resource.loading() {
+        if !self.invitation_resource.invite_data().loading() {
             self.dispatch.send(LandingStateAction::AcceptSplash);
         }
     }
 
     pub fn on_fetch_end(&self) {
-        if let Some(data) = self.invitation_resource.data() {
-            self.handle_invite(data.invite);
-        } else {
-            self.handle_invite(None);
+        if let AsyncResourceHandle::Success(d) = self.invitation_resource.invite_data() {
+            self.handle_data(d)
         }
+        if let AsyncResourceHandle::SubsequentErr(_, d) = self.invitation_resource.invite_data() {
+            self.handle_data(d)
+        }
+        if let AsyncResourceHandle::InitialErr(_) = self.invitation_resource.invite_data() {
+            self.handle_invite(None)
+        }
+        // TODO, if loading?
     }
 }
 
@@ -90,12 +110,9 @@ mod landing_controller_tests {
         impl Dispatch<LandingStateAction> for Object {
             fn send(&self,action:LandingStateAction);
         }
-        impl ApiResource<InviteInfo, ApiError, String> for Object {
-            fn data(&self) -> Option<InviteInfo>;
-            fn set_data(&self, setter: Box<dyn FnOnce(Option<InviteInfo>) -> Option<InviteInfo>>);
-            fn fetch(&self, params: String);
-            fn error(&self) -> Option<ApiError>;
-            fn loading(&self) -> bool;
+        impl InvitationService for Object {
+            fn invite_data(&self) -> &AsyncResourceHandle<InviteInfo, ApiError>;
+            fn fetch_invite(&self, id: &str);
         }
         impl Clone for Object {
             fn clone(&self)->Self;
@@ -117,10 +134,13 @@ mod landing_controller_tests {
             .with(predicate::eq(LandingStateAction::Loading))
             .return_const(());
 
-        resource.expect_data().times(1).return_const(None);
         resource
-            .expect_fetch()
-            .with(predicate::eq(String::from(id)))
+            .expect_invite_data()
+            .times(1)
+            .return_const(AsyncResourceHandle::None);
+        resource
+            .expect_fetch_invite()
+            .with(predicate::eq(id))
             .times(1)
             .return_const(());
 

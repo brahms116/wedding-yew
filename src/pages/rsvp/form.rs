@@ -26,6 +26,7 @@ pub fn form(props: &FormProps) -> Html {
                             id={"coming"}
                             name="rsvp"
                             value={"coming"}
+                            checked={invitee.rsvp.unwrap_or(false)}
                             class="invisible absolute"
                         />
                         <label for="coming" class="radio-label text-[18px]">
@@ -37,6 +38,7 @@ pub fn form(props: &FormProps) -> Html {
                             type={"radio"}
                             id={"not-coming"}
                             name="rsvp"
+                            checked={!invitee.rsvp.unwrap_or(true)}
                             value={"not-coming"}
                             class="invisible absolute"
                         />
@@ -51,6 +53,7 @@ pub fn form(props: &FormProps) -> Html {
                 <div>
                     <textarea
                         id="dietary-requirements"
+                        value={invitee.dietary_requirements}
                         class="
                             w-[100%] max-w-[400px] bg-bg h-[84px] border
                             border-solid
