@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup trunk
-    - uses: actions-rs/toolchain@v1
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
     - run: cargo install --locked trunk
