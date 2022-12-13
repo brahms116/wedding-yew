@@ -7,7 +7,7 @@
     "watch": "tailwindcss -o ./tailwind.css --minify --watch",
     "build-css": "NODE_ENV=PRODUCTION tailwindcss -o ./tailwind.css --minify",
     "build": "bun run build-css && trunk build --release",
-    "build-node": "node run build-css && trunk build --release",
+    "build-node": "npm run build-css && trunk build --release",
     "dev": "trunk serve --address=0.0.0.0 --watch ."
   },
   "repository": {
