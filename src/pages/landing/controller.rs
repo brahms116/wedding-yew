@@ -61,13 +61,13 @@ where
         self.handle_invite(data.invite.clone());
     }
 
-    pub fn on_accept(&self) {
+    pub fn on_splash_accepted(&self) {
         if !self.invitation_resource.fetch_invite_handle().loading() {
             self.dispatch.send(LandingStateAction::AcceptSplash);
         }
     }
 
-    pub fn on_fetch_response_change(&self) {
+    pub fn on_fetch_invite_handle_change(&self) {
         match self.invitation_resource.fetch_invite_handle() {
             A::Success(d) => self.handle_data(d),
             A::InitialErr(e) | A::SubsequentErr(e, ..) => {

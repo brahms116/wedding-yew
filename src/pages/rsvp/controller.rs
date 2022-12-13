@@ -34,7 +34,7 @@ where
         }
     }
 
-    pub fn on_fetch_response_change(&self) {
+    pub fn on_fetch_invite_handle_change(&self) {
         let invite_handle = self.invitation_service.fetch_invite_handle();
         self.dispatch.send(RsvpStateAction::Loading(false));
         if let A::Success(d) = invite_handle {
@@ -61,7 +61,7 @@ where
         }
     }
 
-    pub fn on_submit_end(&self) {
+    pub fn on_rsvp_handle_change(&self) {
         self.dispatch.send(RsvpStateAction::SubmitLoading(false));
         let save_response_handle = self.invitation_service.rsvp_handle();
         match save_response_handle {

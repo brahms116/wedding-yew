@@ -46,7 +46,7 @@ pub fn landing_page() -> Html {
         use_effect_with_deps(
             move |_| {
                 info!("landing page calling on_fetch_end");
-                controller.on_fetch_response_change();
+                controller.on_fetch_invite_handle_change();
                 || {}
             },
             vec![invitation_service_dep.fetch_invite_handle().clone()],
@@ -57,7 +57,7 @@ pub fn landing_page() -> Html {
         let vid_ref = vid_ref.clone();
         let controller = controller.clone();
         Callback::from(move |_: MouseEvent| {
-            controller.on_accept();
+            controller.on_splash_accepted();
             let element = vid_ref
                 .cast::<HtmlVideoElement>()
                 .expect("Ref should be video element");

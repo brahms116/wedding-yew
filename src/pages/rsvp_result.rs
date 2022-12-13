@@ -31,7 +31,7 @@ pub fn rsvp_result() -> Html {
         let invitation_service = invitation_service.clone();
         use_effect_with_deps(
             move |_| {
-                controller.on_invite_data_change();
+                controller.on_fetch_invite_handle_change();
             },
             vec![invitation_service.fetch_invite_handle().clone()],
         )
