@@ -75,13 +75,13 @@ pub fn use_auth() -> Vec<(NavDestination<Route, UrlQuery>, String)> {
     let items = use_state(|| get_nav_items(&wedding_service.relative_day_status, &None));
     let id = use_query_id();
     {
-        let dep = invitation_service.invite_data().clone();
+        let dep = invitation_service.fetch_invite_handle().clone();
         let invitation_service = invitation_service.clone();
         let id = id.clone();
         let items = items.clone();
         use_effect_with_deps(
             move |_| {
-                match invitation_service.invite_data() {
+                match invitation_service.fetch_invite_handle() {
                     A::None => {
                         if let Some(id) = id {
                             invitation_service.fetch_invite(&id);

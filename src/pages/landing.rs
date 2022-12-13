@@ -49,7 +49,7 @@ pub fn landing_page() -> Html {
                 controller.on_fetch_response_change();
                 || {}
             },
-            vec![invitation_service_dep.invite_data().clone()],
+            vec![invitation_service_dep.fetch_invite_handle().clone()],
         )
     }
 

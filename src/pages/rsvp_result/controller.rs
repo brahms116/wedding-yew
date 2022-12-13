@@ -16,7 +16,7 @@ where
     S: SetState<RsvpResultState> + Clone,
 {
     pub fn on_invite_data_change(&self) {
-        match self.invitation_service.invite_data() {
+        match self.invitation_service.fetch_invite_handle() {
             AsyncResourceHandle::None
             | AsyncResourceHandle::InitialErr(..)
             | AsyncResourceHandle::SubsequentErr(..) => self.state_setter.set(RsvpResultState {

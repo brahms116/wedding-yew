@@ -33,7 +33,7 @@ pub fn rsvp_result() -> Html {
             move |_| {
                 controller.on_invite_data_change();
             },
-            vec![invitation_service.invite_data().clone()],
+            vec![invitation_service.fetch_invite_handle().clone()],
         )
     }
     html! {

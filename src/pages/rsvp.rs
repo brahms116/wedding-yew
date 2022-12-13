@@ -42,7 +42,7 @@ pub fn rsvp_page() -> Html {
 
     {
         let controller = controller.clone();
-        let dep = invitation_service.save_response().clone();
+        let dep = invitation_service.rsvp_handle().clone();
         use_effect_with_deps(
             move |_| {
                 info!("rsvp page calling on_submit_end");
@@ -54,7 +54,7 @@ pub fn rsvp_page() -> Html {
     }
     {
         let controller = controller.clone();
-        let dep = invitation_service.invite_data().clone();
+        let dep = invitation_service.rsvp_handle().clone();
         use_effect_with_deps(
             move |_| {
                 info!("rsvp page calling on_fetch_end");

@@ -62,13 +62,13 @@ where
     }
 
     pub fn on_accept(&self) {
-        if !self.invitation_resource.invite_data().loading() {
+        if !self.invitation_resource.fetch_invite_handle().loading() {
             self.dispatch.send(LandingStateAction::AcceptSplash);
         }
     }
 
     pub fn on_fetch_response_change(&self) {
-        match self.invitation_resource.invite_data() {
+        match self.invitation_resource.fetch_invite_handle() {
             A::Success(d) => self.handle_data(d),
             A::InitialErr(e) | A::SubsequentErr(e, ..) => {
                 error!("{}", e);
@@ -91,11 +91,11 @@ mod landing_controller_tests {
             fn send(&self,action:LandingStateAction);
         }
         impl InvitationService for Object {
-            fn invite_data(&self) -> &A<InviteInfo, ApiError>;
+            fn fetch_invite_handle(&self) -> &A<InviteInfo, ApiError>;
             fn fetch_invite(&self, id: &str);
-            fn save_invite(&self, invite: &Invitation);
-            fn save_response(&self) -> &A<bool, ApiError>;
-            fn reset_save_request(&self);
+            fn rsvp(&self, invite: &Invitation);
+            fn rsvp_handle(&self) -> &A<bool, ApiError>;
+            fn reset_rsvp_handle(&self);
         }
         impl Clone for Object {
             fn clone(&self)->Self;

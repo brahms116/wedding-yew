@@ -52,22 +52,22 @@ pub struct InviteInfo {
 pub struct InvitationCtxValue {
     pub fetch_invite_handle: A<InviteInfo, ApiError>,
     pub fetch_invite: Callback<String>,
-    pub save_invite_handle: A<bool, ApiError>,
-    pub save_invite_cb: Callback<Invitation>,
-    pub reset_save_handle_cb: Callback<()>,
+    pub rsvp_handle: A<bool, ApiError>,
+    pub rsvp: Callback<Invitation>,
+    pub reset_rsvp_handle_cb: Callback<()>,
     pub reset_fetch_handle_cb: Callback<()>,
 }
 
 pub trait InvitationService {
-    fn invite_data(&self) -> &A<InviteInfo, ApiError>;
+    fn fetch_invite_handle(&self) -> &A<InviteInfo, ApiError>;
     fn fetch_invite(&self, id: &str);
-    fn save_invite(&self, invite: &Invitation);
-    fn save_response(&self) -> &A<bool, ApiError>;
-    fn reset_save_request(&self);
+    fn rsvp(&self, invite: &Invitation);
+    fn rsvp_handle(&self) -> &A<bool, ApiError>;
+    fn reset_rsvp_handle(&self);
 }
 
 impl InvitationService for InvitationCtxValue {
-    fn invite_data(&self) -> &A<InviteInfo, ApiError> {
+    fn fetch_invite_handle(&self) -> &A<InviteInfo, ApiError> {
         &self.fetch_invite_handle
     }
 
@@ -75,15 +75,15 @@ impl InvitationService for InvitationCtxValue {
         self.fetch_invite.emit(id.to_string());
     }
 
-    fn save_invite(&self, invite: &Invitation) {
-        self.save_invite_cb.emit((*invite).clone());
+    fn rsvp(&self, invite: &Invitation) {
+        self.rsvp.emit((*invite).clone());
     }
 
-    fn save_response(&self) -> &A<bool, ApiError> {
-        &self.save_invite_handle
+    fn rsvp_handle(&self) -> &A<bool, ApiError> {
+        &self.rsvp_handle
     }
-    fn reset_save_request(&self) {
-        self.reset_save_handle_cb.emit(());
+    fn reset_rsvp_handle(&self) {
+        self.reset_rsvp_handle_cb.emit(());
     }
 }
 
@@ -192,9 +192,9 @@ where
     let provided_info = InvitationCtxValue {
         fetch_invite_handle: (*fetch_handle).clone(),
         fetch_invite: fetch_data,
-        save_invite_handle: (*save_handle).clone(),
-        save_invite_cb: save_data,
-        reset_save_handle_cb: reset_save_request,
+        rsvp_handle: (*save_handle).clone(),
+        rsvp: save_data,
+        reset_rsvp_handle_cb: reset_save_request,
         reset_fetch_handle_cb: reset_fetch_request,
     };
 
