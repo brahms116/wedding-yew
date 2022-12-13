@@ -16,6 +16,7 @@ jobs:
       with:
         toolchain: stable
     - run: cargo install --locked trunk
+    - run: rustup target add wasm32-unknown-unknown
     - name: Setup node js
       uses: actions/setup-node@v3
       with:
