@@ -42,11 +42,11 @@ pub fn rsvp_page() -> Html {
 
     {
         let controller = controller.clone();
-        let dep = invitation_service.save_response().clone();
+        let dep = invitation_service.rsvp_handle().clone();
         use_effect_with_deps(
             move |_| {
                 info!("rsvp page calling on_submit_end");
-                controller.on_submit_end();
+                controller.on_rsvp_handle_change();
                 || {}
             },
             vec![dep],
@@ -54,11 +54,11 @@ pub fn rsvp_page() -> Html {
     }
     {
         let controller = controller.clone();
-        let dep = invitation_service.invite_data().clone();
+        let dep = invitation_service.rsvp_handle().clone();
         use_effect_with_deps(
             move |_| {
                 info!("rsvp page calling on_fetch_end");
-                controller.on_fetch_response_change();
+                controller.on_fetch_invite_handle_change();
                 || {}
             },
             vec![dep],
@@ -66,10 +66,10 @@ pub fn rsvp_page() -> Html {
     }
 
     let on_change_cb = {
+        //TODO: move logic inside controller
         let form_data = state.invitation.clone();
         let controller = controller.clone();
         Callback::from(move |invitee: Invitee| {
-            debug!(person = ?invitee);
             let mut new_form_data = form_data.clone();
             if invitee.id == new_form_data.primary_invitee.id {
                 new_form_data.primary_invitee = invitee;

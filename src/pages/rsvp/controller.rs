@@ -34,8 +34,8 @@ where
         }
     }
 
-    pub fn on_fetch_response_change(&self) {
-        let invite_handle = self.invitation_service.invite_data();
+    pub fn on_fetch_invite_handle_change(&self) {
+        let invite_handle = self.invitation_service.fetch_invite_handle();
         self.dispatch.send(RsvpStateAction::Loading(false));
         if let A::Success(d) = invite_handle {
             self.handle_invite_data(d)
@@ -50,20 +50,20 @@ where
 
     pub fn on_form_submit(&self) {
         debug!(submitted_invitation = ?self.current_state.invitation);
-        let save_response_handle = self.invitation_service.save_response();
+        let save_response_handle = self.invitation_service.rsvp_handle();
         match save_response_handle {
             A::None | A::InitialErr(..) | A::SubsequentErr(..) | A::Success(..) => {
                 self.dispatch.send(RsvpStateAction::SubmitLoading(true));
                 self.invitation_service
-                    .save_invite(&self.current_state.invitation.clone());
+                    .rsvp(&self.current_state.invitation.clone());
             }
             A::SubsequentLoad(..) | A::InitialLoad => return,
         }
     }
 
-    pub fn on_submit_end(&self) {
+    pub fn on_rsvp_handle_change(&self) {
         self.dispatch.send(RsvpStateAction::SubmitLoading(false));
-        let save_response_handle = self.invitation_service.save_response();
+        let save_response_handle = self.invitation_service.rsvp_handle();
         match save_response_handle {
             A::SubsequentErr(e, ..) | A::InitialErr(e) => {
                 error!("{}", e)
@@ -79,6 +79,6 @@ where
     }
 
     pub fn on_dismount(&self) {
-        self.invitation_service.reset_save_request();
+        self.invitation_service.reset_rsvp_handle();
     }
 }
