@@ -16,7 +16,7 @@ pub fn landing_page() -> Html {
     let state = use_reducer(LandingState::default);
     let vid_ref = use_node_ref();
     let wedding_service =
-        use_context::<WeddingDayInfo>().expect("Wedding service should be provided.");
+        use_context::<WeddingDayCtxValue>().expect("Wedding service should be provided.");
     let invitation_service =
         use_context::<InvitationCtxValue>().expect("Invitation service should be provided");
     let navigator = use_navigator().expect("Navigator shoule exist");
@@ -128,6 +128,17 @@ pub fn landing_page() -> Html {
                         <div class="text-[1.125rem] mb-6">
                             {state.wedding_date_time_text.clone()}
                         </div>
+                        if state.rsvp_by_date.is_some() {
+                            <div class="text-[1.125rem] mt-4 mb-4">
+                                {
+                                    format!(
+                                        "Please rsvp by - {}",
+                                        state.rsvp_by_date.clone()
+                                            .expect("Should have checked for none")
+                                    )
+                                }
+                            </div>
+                        }
                         <div>
                             <button type="button"
                                 class="

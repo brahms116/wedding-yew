@@ -14,6 +14,7 @@ pub fn app() -> Html {
         <WeddingDayProvider
             utc_offset={config::get_utc_offset()}
             wedding_datetime={config::get_wedding_day()}
+            rsvp_by_datetime={config::get_rsvp_by_date()}
         >
             <LiveStreamServiceProvider live_stream_url={config::get_live_stream_url()}>
                 <InviteProvider<FetchService> api_service={fetch_service}>
