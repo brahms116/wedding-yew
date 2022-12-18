@@ -15,7 +15,7 @@ pub fn rsvp_result() -> Html {
     let invitation_service =
         use_context::<InvitationCtxValue>().expect("Try providing a invitation context");
 
-    let items = use_auth();
+    let (items, default_route) = use_auth();
 
     let controller = {
         let invitation_service = invitation_service.clone();
@@ -38,7 +38,7 @@ pub fn rsvp_result() -> Html {
     }
     html! {
         <div>
-            <NavMenu<Route, UrlQuery> routes={items}/>
+            <NavMenu<Route, UrlQuery> default_route={default_route} routes={items}/>
             <div
                 class="
                     w-full h-[100vh] flex justify-center items-center

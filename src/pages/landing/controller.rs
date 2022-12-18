@@ -14,7 +14,7 @@ where
 {
     pub current_state: LandingState,
     pub dispatch: D,
-    pub wedding_day_info: WeddingDayInfo,
+    pub wedding_day_info: WeddingDayCtxValue,
     pub invitation_resource: R,
     pub livesteam_url: String,
 }
@@ -30,6 +30,7 @@ where
                 WeddingDayStatus::Coming => self.dispatch.send(LandingStateAction::ComingInvited(
                     self.wedding_day_info.datetime_str.clone(),
                     invite,
+                    self.wedding_day_info.rsvp_by_datetime_str.clone(),
                 )),
                 WeddingDayStatus::Today => self.dispatch.send(LandingStateAction::TodayInvited(
                     self.livesteam_url.clone(),

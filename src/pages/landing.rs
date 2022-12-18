@@ -16,7 +16,7 @@ pub fn landing_page() -> Html {
     let state = use_reducer(LandingState::default);
     let vid_ref = use_node_ref();
     let wedding_service =
-        use_context::<WeddingDayInfo>().expect("Wedding service should be provided.");
+        use_context::<WeddingDayCtxValue>().expect("Wedding service should be provided.");
     let invitation_service =
         use_context::<InvitationCtxValue>().expect("Invitation service should be provided");
     let navigator = use_navigator().expect("Navigator shoule exist");
@@ -24,7 +24,7 @@ pub fn landing_page() -> Html {
     let live_stream_service =
         use_context::<LiveStreamService>().expect("Live stream service should be provided");
 
-    let nav_items = use_auth();
+    let (nav_items, default) = use_auth();
 
     let controller = {
         let dispatch = state.clone();
@@ -92,7 +92,7 @@ pub fn landing_page() -> Html {
         let on_cta_click = on_cta_click.clone();
         html! {
             <div class="bg-bg">
-                <NavMenu<Route, UrlQuery> routes={nav_items}/>
+                <NavMenu<Route, UrlQuery> default_route={default} routes={nav_items}/>
                 if !state.splash_accepted {
                     <Splash
                         on_splash_click={on_click}
@@ -128,6 +128,17 @@ pub fn landing_page() -> Html {
                         <div class="text-[1.125rem] mb-6">
                             {state.wedding_date_time_text.clone()}
                         </div>
+                        if state.rsvp_by_date.is_some() {
+                            <div class="text-[1.125rem] mt-4 mb-4">
+                                {
+                                    format!(
+                                        "Please rsvp by - {}",
+                                        state.rsvp_by_date.clone()
+                                            .expect("Should have checked for none")
+                                    )
+                                }
+                            </div>
+                        }
                         <div>
                             <button type="button"
                                 class="

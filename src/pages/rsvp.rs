@@ -14,7 +14,7 @@ pub fn rsvp_page() -> Html {
     let invitation_service =
         use_context::<InvitationCtxValue>().expect("Invitation service is missing");
     let router = use_navigator().expect("Navigator is missing");
-    let nav_items = use_auth();
+    let (nav_items, default_route) = use_auth();
     let controller = {
         let user_id = user_id.clone();
         let invitation_service = invitation_service.clone();
@@ -101,7 +101,7 @@ pub fn rsvp_page() -> Html {
 
     html! {
         <div>
-            <NavMenu<Route, UrlQuery> routes={nav_items}/>
+            <NavMenu<Route, UrlQuery> default_route={default_route} routes={nav_items}/>
             <div class={"flex flex-col my-[130px] px-[32px] max-w-[100%] md:px-[132px]"}>
                 <div
                     class={"text-[72px] mb-[56px]"}

@@ -10,7 +10,7 @@ pub enum LandingStateAction {
     Coming(String),
     Passed(String),
     TodayInvited(String, String, Invitation),
-    ComingInvited(String, Invitation),
+    ComingInvited(String, Invitation, String),
     PassInvited(String, Invitation),
 }
 
@@ -23,6 +23,7 @@ pub struct LandingState {
     pub title_text: String,
     pub subtitle_text: String,
     pub wedding_date_time_text: String,
+    pub rsvp_by_date: Option<String>,
 }
 
 impl LandingState {
@@ -71,7 +72,12 @@ impl LandingState {
         self.subtitle_text = get_coming_subtitle();
     }
 
-    pub fn coming_invited(&mut self, wedding_date_str: String, invite: Invitation) {
+    pub fn coming_invited(
+        &mut self,
+        wedding_date_str: String,
+        invite: Invitation,
+        rsvp_by_datetime_str: String,
+    ) {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("RSVP");
@@ -83,6 +89,7 @@ impl LandingState {
         );
         self.title_text = get_coming_invited_title(invite.get_fnames());
         self.subtitle_text = get_coming_invited_subtitle();
+        self.rsvp_by_date = Some(rsvp_by_datetime_str);
     }
 
     pub fn passed(&mut self, wedding_date_str: String) {
@@ -125,8 +132,8 @@ impl Reducible for LandingState {
             LandingStateAction::TodayInvited(url, date_str, invite) => {
                 state.today_invited(url, date_str, invite)
             }
-            LandingStateAction::ComingInvited(date_str, invite) => {
-                state.coming_invited(date_str, invite)
+            LandingStateAction::ComingInvited(date_str, invite, rsvp_by_date_str) => {
+                state.coming_invited(date_str, invite, rsvp_by_date_str)
             }
             LandingStateAction::PassInvited(date_str, invite) => {
                 state.passed_invited(date_str, invite)
@@ -244,7 +251,7 @@ mod landing_state_test {
         let state = LandingState::default();
         let state = Reducible::reduce(
             std::rc::Rc::new(state),
-            LandingStateAction::ComingInvited("abc".into(), invite()),
+            LandingStateAction::ComingInvited("abc".into(), invite(), "abcd".to_string()),
         );
 
         assert_eq!(state.enter_button_loading, false);
