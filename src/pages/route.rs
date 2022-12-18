@@ -29,8 +29,8 @@ pub fn switch(routes: Route) -> Html {
     match routes {
         Route::Landing => html! {<landing::LandingPage/>},
         Route::RSVP => html! {<rsvp::RSVPPage/>},
-        Route::FAQ => html! {<rsvp::RSVPPage/>},
-        Route::Story => html! {<rsvp::RSVPPage/>},
+        Route::FAQ => html! {<faq::FaqPage/>},
+        Route::Story => html! {<story::StoryPage/>},
         Route::LiveStream => html! {<rsvp::RSVPPage/>},
         Route::RSVPResult => html! {<rsvp_result::RsvpResultPage/>},
     }
