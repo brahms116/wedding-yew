@@ -229,7 +229,7 @@ where
                 "}
             >
                 <div class={"cursor-pointer text-xl"} onclick={default_route_cb}>
-                    {"Mia & David"}
+                    {"David & Mia"}
                 </div>
                 <div class={desktop_links_css}>
                     {
