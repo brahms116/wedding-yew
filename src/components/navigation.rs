@@ -112,6 +112,7 @@ where
     Q: 'static + PartialEq + Serialize,
 {
     pub routes: Vec<(NavDestination<T, Q>, String)>,
+    pub default_route: NavDestination<T, Q>,
 }
 
 /// Navigation menu for the application
@@ -130,6 +131,8 @@ where
     let menu_open = use_state(|| false);
 
     let current_route = use_route::<T>();
+
+    let navigator = use_navigator().expect("Navigator is missing");
 
     let is_same_route = |route: &NavDestination<T, Q>| -> bool {
         match route {
@@ -170,6 +173,27 @@ where
         })
     };
 
+    let default_route_cb = {
+        let default_route = props.default_route.clone();
+        Callback::from(move |_: MouseEvent| {
+            match &default_route {
+                NavDestination::App(r) => {
+                    navigator.push(r);
+                }
+                NavDestination::AppWithQuery(r, q) => {
+                    navigator.push_with_query(r, q).expect("should route");
+                }
+                NavDestination::External(url) => {
+                    web_sys::window()
+                        .expect("Window should exist")
+                        .location()
+                        .assign(url)
+                        .expect("Location should navigate");
+                }
+            };
+        })
+    };
+
     {
         let menu_open_dep = *menu_open.clone();
         let menu_open_predicate = *menu_open.clone();
@@ -204,7 +228,7 @@ where
                     bg-bg z-20
                 "}
             >
-                <div class={"text-xl"}>
+                <div class={"cursor-pointer text-xl"} onclick={default_route_cb}>
                     {"Mia & David"}
                 </div>
                 <div class={desktop_links_css}>

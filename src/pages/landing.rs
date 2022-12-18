@@ -24,7 +24,7 @@ pub fn landing_page() -> Html {
     let live_stream_service =
         use_context::<LiveStreamService>().expect("Live stream service should be provided");
 
-    let nav_items = use_auth();
+    let (nav_items, default) = use_auth();
 
     let controller = {
         let dispatch = state.clone();
@@ -92,7 +92,7 @@ pub fn landing_page() -> Html {
         let on_cta_click = on_cta_click.clone();
         html! {
             <div class="bg-bg">
-                <NavMenu<Route, UrlQuery> routes={nav_items}/>
+                <NavMenu<Route, UrlQuery> default_route={default} routes={nav_items}/>
                 if !state.splash_accepted {
                     <Splash
                         on_splash_click={on_click}

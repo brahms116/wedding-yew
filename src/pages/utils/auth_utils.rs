@@ -18,8 +18,12 @@ fn base_nav_items(id: &Option<String>) -> Vec<(NavDestination<Route, UrlQuery>, 
 pub fn get_nav_items(
     status: &WeddingDayStatus,
     id: &Option<String>,
-) -> Vec<(NavDestination<Route, UrlQuery>, String)> {
+) -> (
+    Vec<(NavDestination<Route, UrlQuery>, String)>,
+    NavDestination<Route, UrlQuery>,
+) {
     let mut items = base_nav_items(id);
+    let default = NavDestination::AppWithQuery(Route::Landing, UrlQuery { id: id.clone() });
     match status {
         WeddingDayStatus::Coming => {
             if let Some(id) = id {
@@ -62,11 +66,14 @@ pub fn get_nav_items(
         }
         WeddingDayStatus::Passed => {}
     }
-    items
+    (items, default)
 }
 
 #[hook]
-pub fn use_auth() -> Vec<(NavDestination<Route, UrlQuery>, String)> {
+pub fn use_auth() -> (
+    Vec<(NavDestination<Route, UrlQuery>, String)>,
+    NavDestination<Route, UrlQuery>,
+) {
     let invitation_service =
         use_context::<InvitationCtxValue>().expect("Try adding a provider for invitation service");
     let wedding_service = use_context::<WeddingDayInfo>().expect("Try providing a wedding service");
