@@ -21,6 +21,7 @@ pub struct LandingState {
     pub cta_button_text: String,
     pub cta_button_route: NavDestination<Route, UrlQuery>,
     pub title_text: String,
+    pub cta_button_id: String,
     pub subtitle_text: String,
     pub wedding_date_time_text: String,
     pub rsvp_by_date: Option<String>,
@@ -44,6 +45,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Live Stream");
+        self.cta_button_id = String::from("live-stream-button");
         self.cta_button_route = NavDestination::External(String::from(live_stream_url));
         self.title_text = get_today_title();
         self.subtitle_text = get_today_subtitle();
@@ -58,6 +60,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Live Stream");
+        self.cta_button_id = String::from("live-stream-button");
         self.cta_button_route = NavDestination::External(String::from(live_stream_url));
         self.title_text = get_today_invited_title(invite.get_fnames());
         self.subtitle_text = get_today_invited_subtitle();
@@ -67,6 +70,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Our Story");
+        self.cta_button_id = String::from("our-story-button");
         self.cta_button_route = NavDestination::App(Route::Story);
         self.title_text = get_coming_title();
         self.subtitle_text = get_coming_subtitle();
@@ -81,6 +85,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("RSVP");
+        self.cta_button_id = String::from("rsvp-button");
         self.cta_button_route = NavDestination::AppWithQuery(
             Route::RSVP,
             UrlQuery {
@@ -96,6 +101,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Our Story");
+        self.cta_button_id = String::from("our-story-button");
         self.cta_button_route = NavDestination::App(Route::Story);
         self.title_text = get_passed_title();
         self.subtitle_text = get_passed_subtitle();
@@ -105,6 +111,7 @@ impl LandingState {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
         self.cta_button_text = String::from("Our Story");
+        self.cta_button_id = String::from("our-story-button");
         self.cta_button_route = NavDestination::AppWithQuery(
             Route::Story,
             UrlQuery {

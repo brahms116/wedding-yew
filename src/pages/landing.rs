@@ -90,6 +90,7 @@ pub fn landing_page() -> Html {
         let state = state.clone();
         let vid_ref = vid_ref.clone();
         let on_cta_click = on_cta_click.clone();
+
         html! {
             <div class="bg-bg">
                 <NavMenu<Route, UrlQuery> default_route={default} routes={nav_items}/>
@@ -142,9 +143,10 @@ pub fn landing_page() -> Html {
                         <div>
                             <button type="button"
                                 class="
-                                p-2 bg-black text-white w-36
-                                rounded-full
-                            "
+                                    p-2 bg-black text-white w-36
+                                    rounded-full
+                                "
+                                id={state.cta_button_id.clone()}
                                 onclick={on_cta_click}
                             >{state.cta_button_text.clone()}</button>
                         </div>

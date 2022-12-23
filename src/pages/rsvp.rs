@@ -99,6 +99,12 @@ pub fn rsvp_page() -> Html {
         "Submit"
     };
 
+    let submit_loading_class = if state.is_submit_loading {
+        "loading"
+    } else {
+        ""
+    };
+
     html! {
         <div>
             <NavMenu<Route, UrlQuery> default_route={default_route} routes={nav_items}/>
@@ -130,16 +136,17 @@ pub fn rsvp_page() -> Html {
                     <div>
                         <button
                         type="button"
-                        class="
+                        class={format!("
                             p-2 bg-black text-white w-36
-                            rounded-full
-                        "
+                            rounded-full {}
+                        ", submit_loading_class)}
                         onclick={on_submit_click}
-                        >{"SUBMIT"}</button>
+                        id="rsvp-submit"
+                        >{submit_button_text}</button>
                     </div>
                 }
                 else {
-                    <div>{submit_button_text}</div>
+                    <div class="loading">{"Loading..."}</div>
                 }
             </div>
         </div>

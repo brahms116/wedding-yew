@@ -28,6 +28,12 @@ pub fn splash(props: &SplashProps) -> Html {
         })
     };
 
+    let loading_class = if props.is_loading {
+        "loading".to_string()
+    } else {
+        "".to_string()
+    };
+
     html! {
         <div class="
             w-screen fixed h-screen bg-bg z-20 top-0 flex justify-center
@@ -42,11 +48,12 @@ pub fn splash(props: &SplashProps) -> Html {
             </div>
             <button type="button"
                 onclick={onclick}
-                class="
+                id="accept-splash-button"
+                class={format!("
                     py-2 px-8 bg-black text-white 
                     animate-fade-slow
-                    rounded-full
-                "
+                    rounded-full {}
+                ", loading_class)}
             >{label}</button>
         </div>
     }

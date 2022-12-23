@@ -40,9 +40,10 @@ pub fn rsvp_result() -> Html {
         <div>
             <NavMenu<Route, UrlQuery> default_route={default_route} routes={items}/>
             <div
-                class="
-                    w-full h-[100vh] flex justify-center items-center
-                ">
+                id={"rsvp-result-text"}
+                class={format!("
+                    w-full h-[100vh] flex justify-center items-center {}
+                ",(*state).clone().loading_css_class)}>
                 {(*state).clone().title_text}
             </div>
         </div>
