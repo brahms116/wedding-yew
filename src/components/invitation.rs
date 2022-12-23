@@ -90,7 +90,7 @@ impl InvitationService for InvitationCtxValue {
 #[derive(PartialEq, Properties, Debug)]
 pub struct InviteProviderProps<T>
 where
-    T: InviteApi + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
+    T: InviteApi2 + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
 {
     pub children: Children,
     pub api_service: T,
@@ -99,7 +99,7 @@ where
 #[function_component(InviteProvider)]
 pub fn invite_provider<T>(props: &InviteProviderProps<T>) -> Html
 where
-    T: InviteApi + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
+    T: InviteApi2 + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
 {
     debug!(InviteProviderProps = ?props);
 
@@ -124,13 +124,13 @@ where
                     }
                 };
 
-                let response = api_service.save_invite(&invite).await;
+                let url = api_service.get_url();
+                let response = save_invite(url, &invite).await;
                 if let Err(err) = response {
                     // TODO: Parse error properly and set it in save_handle
                     error!("{}", err)
                 } else {
-                    let response = response.expect("Try checking for err above");
-                    save_handle.set(A::Success(response));
+                    save_handle.set(A::Success(true));
                 }
             })
         })
@@ -152,7 +152,7 @@ where
                     fetch_handle.set(A::InitialLoad)
                 }
 
-                let response = api_service.fetch_invite(&id).await;
+                let response = fetch_invite(&api_service.get_url(), &id).await;
                 if let Ok(invite) = response {
                     fetch_handle.set(A::Success(InviteInfo {
                         invite: Some(invite),

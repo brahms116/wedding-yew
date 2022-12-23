@@ -20,6 +20,7 @@ async-trait = "0.1.58"
 thiserror = "1.0.37"
 wasm-bindgen-futures = "0.4.33"
 wasm-bindgen = "0.2"
+gloo-net = { version = "0.2.5", features = ["http"] }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -32,7 +33,13 @@ features = [
   "HtmlVideoElement",
   "HtmlTextAreaElement",
   "HtmlMediaElement",
-  "Event"
+  "Event",
+  'Headers',
+  'Request',
+  'RequestInit',
+  'RequestMode',
+  'Response',
+  'Window',
 ] 
 
 [dev-dependencies]
