@@ -54,7 +54,7 @@ pub fn rsvp_page() -> Html {
     }
     {
         let controller = controller.clone();
-        let dep = invitation_service.rsvp_handle().clone();
+        let dep = invitation_service.fetch_invite_handle().clone();
         use_effect_with_deps(
             move |_| {
                 info!("rsvp page calling on_fetch_end");
