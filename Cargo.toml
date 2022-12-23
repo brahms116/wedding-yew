@@ -33,13 +33,7 @@ features = [
   "HtmlVideoElement",
   "HtmlTextAreaElement",
   "HtmlMediaElement",
-  "Event",
-  'Headers',
-  'Request',
-  'RequestInit',
-  'RequestMode',
-  'Response',
-  'Window',
+  "Event"
 ] 
 
 [dev-dependencies]
