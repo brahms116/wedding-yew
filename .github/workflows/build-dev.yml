@@ -25,6 +25,7 @@ jobs:
     - run: npm run build-node
       env: 
         API_ENDPOINT: https://aqo9tu62bl.execute-api.ap-southeast-2.amazonaws.com/PROD/api
+        ENVIRONMENT: DEV
     - run: touch ./dist/_redirects
     - run: echo "/* /index.html 200" >> ./dist/_redirects
     - name: Publish
