@@ -5,7 +5,6 @@ use super::*;
 use controller::*;
 use form::*;
 use state::*;
-use tracing::{debug, info};
 
 #[function_component(RSVPPage)]
 pub fn rsvp_page() -> Html {
@@ -45,7 +44,6 @@ pub fn rsvp_page() -> Html {
         let dep = invitation_service.rsvp_handle().clone();
         use_effect_with_deps(
             move |_| {
-                info!("rsvp page calling on_submit_end");
                 controller.on_rsvp_handle_change();
                 || {}
             },
@@ -57,7 +55,6 @@ pub fn rsvp_page() -> Html {
         let dep = invitation_service.fetch_invite_handle().clone();
         use_effect_with_deps(
             move |_| {
-                info!("rsvp page calling on_fetch_end");
                 controller.on_fetch_invite_handle_change();
                 || {}
             },

@@ -8,7 +8,6 @@ use controller::*;
 use copy::*;
 use splash::*;
 use state::*;
-use tracing::info;
 use web_sys::HtmlVideoElement;
 
 #[function_component(LandingPage)]
@@ -45,7 +44,6 @@ pub fn landing_page() -> Html {
         let invitation_service_dep = invitation_service.clone();
         use_effect_with_deps(
             move |_| {
-                info!("landing page calling on_fetch_end");
                 controller.on_fetch_invite_handle_change();
                 || {}
             },

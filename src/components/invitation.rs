@@ -1,6 +1,5 @@
 use super::*;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error};
 use wasm_bindgen_futures::spawn_local;
 
 type A<T, E> = AsyncResourceHandle<T, E>;
@@ -101,8 +100,6 @@ pub fn invite_provider<T>(props: &InviteProviderProps<T>) -> Html
 where
     T: InviteApi2 + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
 {
-    debug!(InviteProviderProps = ?props);
-
     let fetch_handle = use_state(|| A::<InviteInfo, ApiError>::None);
     let save_handle = use_state(|| A::<bool, ApiError>::None);
 
@@ -128,7 +125,6 @@ where
                 let response = save_invite(url, &invite).await;
                 if let Err(err) = response {
                     // TODO: Parse error properly and set it in save_handle
-                    error!("{}", err)
                 } else {
                     save_handle.set(A::Success(true));
                 }
@@ -198,8 +194,6 @@ where
         reset_fetch_handle_cb: reset_fetch_request,
     };
 
-    debug!(InviteProvidedInfo = ?provided_info);
-
     html! {
         <ContextProvider<InvitationCtxValue> context={provided_info}>
             {for props.children.iter()}
@@ -218,6 +212,5 @@ pub fn use_query_id() -> Option<String> {
     let query = location
         .query::<UrlQuery>()
         .expect("Url params should be deserializable");
-    debug!(url_query = ?query);
     query.id
 }
