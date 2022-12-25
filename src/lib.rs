@@ -9,8 +9,7 @@ use yew_router::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let fetch_service =
-        FetchService("https://om179wgdqi.execute-api.ap-southeast-2.amazonaws.com/PROD/api".into());
+    let fetch_service = FetchService(std::env!("API_ENDPOINT").into());
     html! {
         <WeddingDayProvider
             utc_offset={config::get_utc_offset()}
