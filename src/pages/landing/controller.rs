@@ -72,7 +72,7 @@ where
         let invite_handle = self.invitation_resource.fetch_invite_handle();
         match invite_handle {
             A::Success(d) => self.handle_data(d),
-            A::InitialErr(e) | A::SubsequentErr(e, ..) => self.handle_invite(None),
+            A::InitialErr(..) | A::SubsequentErr(..) => self.handle_invite(None),
             A::InitialLoad | A::SubsequentLoad(..) => {
                 self.dispatch.send(LandingStateAction::Loading)
             }
