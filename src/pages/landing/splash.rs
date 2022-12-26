@@ -8,11 +8,10 @@ pub struct SplashProps {
 
 #[function_component(Splash)]
 pub fn splash(props: &SplashProps) -> Html {
-    let msg: &str = "
-        \"We love because he first loved us. ~1 John 4:19~\"
+    let msg: &str = "\
+        \"We love because he first loved us. ~1 John 4:19~\"\
     ";
     let words = msg.split(" ").collect::<Vec<&str>>();
-
     let label = if props.is_loading {
         "Loading..."
     } else {

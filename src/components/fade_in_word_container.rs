@@ -16,15 +16,17 @@ pub fn word_container(props: &WordContainerProps) -> Html {
         move || class.set("animate-fade".into())
     };
 
-    let delay = props.clone().delay;
-
-    use_effect_with_deps(
-        move |_| {
-            Timeout::new(delay, cb).forget();
-            || {}
-        },
-        (),
-    );
+    {
+        let delay = props.clone().delay;
+        let word = props.word.clone();
+        use_effect_with_deps(
+            move |_| {
+                Timeout::new(delay, cb).forget();
+                || {}
+            },
+            word,
+        );
+    }
 
     html! {
         <div class={classes!(vec![(*class).clone(),"mr-1 text-xl".into()])}>{props.word.clone()}</div>
