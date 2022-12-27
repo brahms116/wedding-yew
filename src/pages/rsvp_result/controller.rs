@@ -25,8 +25,8 @@ where
             }),
             AsyncResourceHandle::InitialLoad | AsyncResourceHandle::SubsequentLoad(..) => {
                 self.state_setter.set(RsvpResultState {
-                    title_text: "Loading...".into(),
-                    loading_css_class: "loading".to_string(),
+                    title_text: "Loading your rsvp result".into(),
+                    loading_css_class: "loading animate-pulse".to_string(),
                 })
             }
             AsyncResourceHandle::Success(d) => {

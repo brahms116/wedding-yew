@@ -91,15 +91,15 @@ pub fn rsvp_page() -> Html {
     };
 
     let submit_button_text = if state.is_submit_loading {
-        "Loading..."
+        "Submitting your rsvp..."
     } else {
         "Submit"
     };
 
     let submit_loading_class = if state.is_submit_loading {
-        "loading"
+        "loading bg-bg animate-pulse text-black"
     } else {
-        ""
+        "bg-black text-white"
     };
 
     html! {
@@ -134,7 +134,7 @@ pub fn rsvp_page() -> Html {
                         <button
                         type="button"
                         class={format!("
-                            p-2 bg-black text-white w-36
+                            p-2 w-36
                             rounded-full {}
                         ", submit_loading_class)}
                         onclick={on_submit_click}
@@ -143,7 +143,7 @@ pub fn rsvp_page() -> Html {
                     </div>
                 }
                 else {
-                    <div class="loading">{"Loading..."}</div>
+                    <div class="loading animate-pulse">{"Loading your invitation data..."}</div>
                 }
             </div>
         </div>
