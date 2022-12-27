@@ -96,6 +96,7 @@ pub fn landing_page() -> Html {
                     on_splash_click={on_click}
                     is_loading={state.enter_button_loading}
                 />
+                <ErrorDisplay/>
                 <div class="
                     w-screen max-h-screen max-w-full overflow-y-auto
                 ">

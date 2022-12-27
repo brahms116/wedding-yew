@@ -45,6 +45,13 @@ where
         }
     }
 
+    pub fn err(&self) -> Option<&E> {
+        match self {
+            Self::InitialErr(e) | Self::SubsequentErr(e, ..) => Some(e),
+            _ => None,
+        }
+    }
+
     pub fn data(&self) -> Option<&T> {
         match self {
             Self::Success(d) | Self::SubsequentLoad(d) | Self::SubsequentErr(.., d) => {
