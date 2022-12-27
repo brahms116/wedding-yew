@@ -39,8 +39,6 @@ pub fn form(props: &FormProps) -> Html {
             })
         };
 
-        debug!(value = invitee.rsvp.unwrap_or(false));
-
         html! {
             <div>
                 <div

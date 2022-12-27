@@ -1,6 +1,6 @@
 use super::*;
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error};
+use tracing::{event, span, Level};
 use wasm_bindgen_futures::spawn_local;
 
 type A<T, E> = AsyncResourceHandle<T, E>;
@@ -101,8 +101,6 @@ pub fn invite_provider<T>(props: &InviteProviderProps<T>) -> Html
 where
     T: InviteApi2 + PartialEq + Clone + 'static + Send + Sync + std::fmt::Debug,
 {
-    debug!(InviteProviderProps = ?props);
-
     let fetch_handle = use_state(|| A::<InviteInfo, ApiError>::None);
     let save_handle = use_state(|| A::<bool, ApiError>::None);
 
@@ -114,6 +112,9 @@ where
             let api_service = api_service.clone();
             let invite = invite.clone();
             spawn_local(async move {
+                let span = span!(target: "invitation-ctx", Level::DEBUG, "save-invite-data");
+                let _enter = span.enter();
+                event!(Level::DEBUG, ?save_handle);
                 match &*save_handle {
                     A::SubsequentLoad(..) | A::InitialLoad => return,
                     A::SubsequentErr(.., d) | A::Success(d) => {
@@ -125,11 +126,13 @@ where
                 };
 
                 let url = api_service.get_url();
+                event!(Level::INFO, "Calling save invite");
                 let response = save_invite(url, &invite).await;
                 if let Err(err) = response {
                     // TODO: Parse error properly and set it in save_handle
-                    error!("{}", err)
+                    event!(Level::ERROR, ?err)
                 } else {
+                    event!(Level::INFO, "Invite sucessfully saved");
                     save_handle.set(A::Success(true));
                 }
             })
@@ -143,7 +146,12 @@ where
             let fetch_handle = fetch_handle.clone();
             let api_service = api_service.clone();
             spawn_local(async move {
+                let span = span!(target: "invitation-ctx", Level::DEBUG, "fetch-invite-data");
+                let _enter = span.enter();
+                event!(Level::INFO, "Calling fetch-invite-data");
+                event!(Level::DEBUG, id);
                 if fetch_handle.loading() {
+                    event!(Level::INFO, "NOOP - fetch is loading");
                     return;
                 }
                 if let Some(d) = fetch_handle.data() {
@@ -154,13 +162,16 @@ where
 
                 let response = fetch_invite(&api_service.get_url(), &id).await;
                 if let Ok(invite) = response {
+                    event!(Level::INFO, "fetch-invite-data successful");
                     fetch_handle.set(A::Success(InviteInfo {
                         invite: Some(invite),
                     }))
                 } else if let Err(ApiError::NotInvited(_)) = response {
+                    event!(Level::WARN, "Not invited");
                     fetch_handle.set(A::Success(InviteInfo { invite: None }));
                 } else {
                     let err = response.expect_err("Should have matched all other possibilities");
+                    event!(Level::ERROR, ?err);
                     if let A::SubsequentLoad(d) = &*fetch_handle {
                         fetch_handle.set(A::SubsequentErr(err, d.clone()))
                     } else {
@@ -198,8 +209,6 @@ where
         reset_fetch_handle_cb: reset_fetch_request,
     };
 
-    debug!(InviteProvidedInfo = ?provided_info);
-
     html! {
         <ContextProvider<InvitationCtxValue> context={provided_info}>
             {for props.children.iter()}
@@ -218,6 +227,5 @@ pub fn use_query_id() -> Option<String> {
     let query = location
         .query::<UrlQuery>()
         .expect("Url params should be deserializable");
-    debug!(url_query = ?query);
     query.id
 }

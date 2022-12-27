@@ -1,5 +1,3 @@
-use tracing::debug;
-
 use super::*;
 
 #[derive(PartialEq, Debug)]
@@ -129,7 +127,6 @@ impl Reducible for LandingState {
 
     fn reduce(self: std::rc::Rc<Self>, action: Self::Action) -> std::rc::Rc<Self> {
         let mut state = (*self).clone();
-        debug!(landing_state_action_called = ?action);
         match action {
             LandingStateAction::Loading => state.loading(),
             LandingStateAction::AcceptSplash => state.accept_splash(),
@@ -146,7 +143,6 @@ impl Reducible for LandingState {
                 state.passed_invited(date_str, invite)
             }
         };
-        debug!(new_landing_state = ?state);
         std::rc::Rc::new(state)
     }
 }

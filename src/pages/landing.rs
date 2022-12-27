@@ -8,7 +8,6 @@ use controller::*;
 use copy::*;
 use splash::*;
 use state::*;
-use tracing::info;
 use web_sys::HtmlVideoElement;
 
 #[function_component(LandingPage)]
@@ -45,7 +44,6 @@ pub fn landing_page() -> Html {
         let invitation_service_dep = invitation_service.clone();
         use_effect_with_deps(
             move |_| {
-                info!("landing page calling on_fetch_end");
                 controller.on_fetch_invite_handle_change();
                 || {}
             },
@@ -92,63 +90,63 @@ pub fn landing_page() -> Html {
         let on_cta_click = on_cta_click.clone();
 
         html! {
-            <div class="bg-bg">
+            <div class="bg-bg overflow-y-hidden">
                 <NavMenu<Route, UrlQuery> default_route={default} routes={nav_items}/>
-                if !state.splash_accepted {
-                    <Splash
-                        on_splash_click={on_click}
-                        is_loading={state.enter_button_loading}
-                    />
-                }
+                <Splash
+                    on_splash_click={on_click}
+                    is_loading={state.enter_button_loading}
+                />
+                <ErrorDisplay/>
                 <div class="
-                mt-20 w-screen h-screen max-w-full flex 
-                items-center justify-center
-            ">
-                    <div class="
-                   flex items-center justify-center flex-col text-center max-w-md
-                   text-[1.125rem] overflow-x-hidden
-                   mb-16 px-4
+                    w-screen max-h-screen max-w-full overflow-y-auto
                 ">
-                        <div class="mb-4 italic">
-                            {state.title_text.clone()}
-                        </div>
-                        <div class="italic">
-                            {state.subtitle_text.clone()}
-                        </div>
-                        <div class="h-[300px]">
-                            <video class="h-[200px] relative z-0" ref={vid_ref}>
-                                <source src="video.mp4" type="video/mp4"/>
-                            </video>
-                        </div>
-                        <div class="text-5xl font-serif mb-6">
-                            {"David & Mia"}
-                        </div>
-                        <div class="text-[1.125rem]">
-                            {"Ann St Presbyterian"}
-                        </div>
-                        <div class="text-[1.125rem] mb-6">
-                            {state.wedding_date_time_text.clone()}
-                        </div>
-                        if state.rsvp_by_date.is_some() {
-                            <div class="text-[1.125rem] mt-4 mb-4">
-                                {
-                                    format!(
-                                        "Please rsvp by - {}",
-                                        state.rsvp_by_date.clone()
-                                            .expect("Should have checked for none")
-                                    )
-                                }
+                    <div class="w-full flex justify-center">
+                        <div class="
+                           flex items-center flex-col text-center max-w-md
+                           text-[1.125rem] overflow-x-hidden
+                           mb-16 px-4 mt-20
+                        ">
+                            <div class="mb-4 italic">
+                                {state.title_text.clone()}
                             </div>
-                        }
-                        <div>
-                            <button type="button"
-                                class="
-                                    p-2 bg-black text-white w-36
-                                    rounded-full
-                                "
-                                id={state.cta_button_id.clone()}
-                                onclick={on_cta_click}
-                            >{state.cta_button_text.clone()}</button>
+                            <div class="italic">
+                                {state.subtitle_text.clone()}
+                            </div>
+                            <div class="h-[300px]">
+                                <video class="h-[200px] relative z-0" ref={vid_ref}>
+                                    <source src="video.mp4" type="video/mp4"/>
+                                </video>
+                            </div>
+                            <div class="text-5xl font-serif mb-6">
+                                {"David & Mia"}
+                            </div>
+                            <div class="text-[1.125rem]">
+                                {"Ann St Presbyterian"}
+                            </div>
+                            <div class="text-[1.125rem] mb-6">
+                                {state.wedding_date_time_text.clone()}
+                            </div>
+                            if state.rsvp_by_date.is_some() {
+                                <div class="text-[1.125rem] mt-4 mb-4">
+                                    {
+                                        format!(
+                                            "Please rsvp by - {}",
+                                            state.rsvp_by_date.clone()
+                                                .expect("Should have checked for none")
+                                        )
+                                    }
+                                </div>
+                            }
+                            <div>
+                                <button type="button"
+                                    class="
+                                        p-2 bg-black text-white w-36
+                                        rounded-full
+                                    "
+                                    id={state.cta_button_id.clone()}
+                                    onclick={on_cta_click}
+                                >{state.cta_button_text.clone()}</button>
+                            </div>
                         </div>
                     </div>
                 </div>
