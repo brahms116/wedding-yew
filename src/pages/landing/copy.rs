@@ -62,5 +62,9 @@ pub fn get_passed_invited_title(names: Vec<String>) -> String {
 }
 
 pub fn get_passed_invited_subtitle(did_attend: bool) -> String {
-    String::from("")
+    if did_attend {
+        String::from("Thank you for celebrating our special day with us")
+    } else {
+        String::from("Thank you for celebrating our special day with us in spirit")
+    }
 }
