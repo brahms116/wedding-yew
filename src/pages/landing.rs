@@ -113,7 +113,7 @@ pub fn landing_page() -> Html {
                                 {state.subtitle_text.clone()}
                             </div>
                             <div class="h-[300px]">
-                                <video class="h-[200px] relative z-0" ref={vid_ref}>
+                                <video class="h-[200px] relative z-0" playsinline={true} ref={vid_ref}>
                                     <source src="video.mp4" type="video/mp4"/>
                                 </video>
                             </div>
