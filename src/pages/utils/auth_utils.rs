@@ -14,6 +14,10 @@ fn base_nav_items(id: &Option<String>) -> Vec<(NavDestination<Route, UrlQuery>, 
             NavDestination::AppWithQuery(Route::Story, UrlQuery { id: id.clone() }),
             "Our Story".into(),
         ),
+        (
+            NavDestination::External("https://github.com/brahms116/wedding-yew".into()),
+            "Github".into(),
+        ),
     ]
 }
 
