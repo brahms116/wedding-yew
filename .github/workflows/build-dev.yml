@@ -1,10 +1,10 @@
 
-name: Build and deploy
+name: Build and deploy for development
 
 on:
   push:
     branches: 
-      - 'PROD'
+      - 'DEV'
 
 jobs:
   build:
@@ -23,6 +23,9 @@ jobs:
         node-version: 16
     - run: npm ci
     - run: npm run build-node
+      env: 
+        API_ENDPOINT: https://aqo9tu62bl.execute-api.ap-southeast-2.amazonaws.com/PROD/api
+        ENVIRONMENT: DEV
     - run: touch ./dist/_redirects
     - run: echo "/* /index.html 200" >> ./dist/_redirects
     - name: Publish
@@ -30,5 +33,5 @@ jobs:
       with:
         args: deploy --dir=dist --prod
       env:
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_DEV }}
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

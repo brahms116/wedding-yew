@@ -1,7 +1,5 @@
-use gloo_utils::document;
 use serde::Serialize;
 use std::hash::Hash;
-use web_sys::HtmlElement;
 
 use super::*;
 
@@ -194,30 +192,30 @@ where
         })
     };
 
-    {
-        let menu_open_dep = *menu_open.clone();
-        let menu_open_predicate = *menu_open.clone();
-        use_effect_with_deps(
-            move |_| {
-                let body: HtmlElement = document().body().unwrap();
-                if menu_open_predicate {
-                    body.style().set_property("overflow-y", "hidden").unwrap();
-                } else {
-                    body.style().set_property("overflow-y", "auto").unwrap();
-                }
+    // {
+    //     let menu_open_dep = *menu_open.clone();
+    //     let menu_open_predicate = *menu_open.clone();
+    //     use_effect_with_deps(
+    //         move |_| {
+    //             let body: HtmlElement = document().body().unwrap();
+    //             if menu_open_predicate {
+    //                 body.style().set_property("overflow-y", "hidden").unwrap();
+    //             } else {
+    //                 body.style().set_property("overflow-y", "visible").unwrap();
+    //             }
 
-                || {
-                    document()
-                        .body()
-                        .unwrap()
-                        .style()
-                        .set_property("overflow-y", "auto")
-                        .unwrap();
-                }
-            },
-            menu_open_dep,
-        );
-    }
+    //             || {
+    //                 document()
+    //                     .body()
+    //                     .unwrap()
+    //                     .style()
+    //                     .set_property("overflow-y", "auto")
+    //                     .unwrap();
+    //             }
+    //         },
+    //         menu_open_dep,
+    //     );
+    // }
 
     let menu_icon = if *menu_open { "fa-close" } else { "fa-bars" };
 

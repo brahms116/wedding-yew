@@ -1,3 +1,5 @@
+use tracing::{event, span, Level};
+
 use super::*;
 
 type A = AsyncResourceHandle<InviteInfo, ApiError>;
@@ -12,11 +14,16 @@ fn base_nav_items(id: &Option<String>) -> Vec<(NavDestination<Route, UrlQuery>, 
             NavDestination::AppWithQuery(Route::Story, UrlQuery { id: id.clone() }),
             "Our Story".into(),
         ),
+        (
+            NavDestination::External("https://github.com/brahms116/wedding-yew".into()),
+            "Github".into(),
+        ),
     ]
 }
 
 pub fn get_nav_items(
     status: &WeddingDayStatus,
+    livestream_link: &str,
     id: &Option<String>,
 ) -> (
     Vec<(NavDestination<Route, UrlQuery>, String)>,
@@ -60,7 +67,7 @@ pub fn get_nav_items(
                 ));
             }
             items.push((
-                NavDestination::AppWithQuery(Route::LiveStream, UrlQuery { id: id.clone() }),
+                NavDestination::External(livestream_link.into()),
                 "Live stream".into(),
             ));
         }
@@ -78,9 +85,17 @@ pub fn use_auth() -> (
         use_context::<InvitationCtxValue>().expect("Try adding a provider for invitation service");
     let wedding_service =
         use_context::<WeddingDayCtxValue>().expect("Try providing a wedding service");
+    let livestream_service =
+        use_context::<LiveStreamService>().expect("Try providing a livestream service");
     let navigator = use_navigator().expect("Try placing this hook inside a router");
     let current_route = use_route::<Route>().expect("Try using this on a valid app route");
-    let items = use_state(|| get_nav_items(&wedding_service.relative_day_status, &None));
+    let items = use_state(|| {
+        get_nav_items(
+            &wedding_service.relative_day_status,
+            &livestream_service.0,
+            &None,
+        )
+    });
     let id = use_query_id();
     {
         let dep = invitation_service.fetch_invite_handle().clone();
@@ -89,13 +104,24 @@ pub fn use_auth() -> (
         let items = items.clone();
         use_effect_with_deps(
             move |_| {
+                let span =
+                    span!(target:"use-auth-hook", Level::DEBUG, "use-auth-on-invite-handle-change");
+                let _enter = span.enter();
+                event!(Level::INFO, "invite-handle changed");
+                event!(
+                    Level::DEBUG,
+                    invite_handle =? invitation_service.fetch_invite_handle()
+                );
                 match invitation_service.fetch_invite_handle() {
                     A::None => {
                         if let Some(id) = id {
+                            event!(Level::INFO, "call fetch invite-handle ");
                             invitation_service.fetch_invite(&id);
                         } else {
+                            event!(Level::INFO, "perform auth route check");
                             match current_route {
                                 Route::RSVP | Route::FAQ | Route::RSVPResult => {
+                                    event!(Level::INFO, "reroute");
                                     navigator.push(&Route::Landing)
                                 }
                                 _ => {}
@@ -103,16 +129,26 @@ pub fn use_auth() -> (
                         }
                     }
                     A::InitialLoad | A::SubsequentLoad(..) => {}
-                    A::InitialErr(..) | A::SubsequentErr(..) => match current_route {
-                        Route::RSVP | Route::FAQ | Route::RSVPResult => {
-                            navigator.push(&Route::Landing)
+                    A::InitialErr(e) | A::SubsequentErr(e, ..) => {
+                        event!(Level::ERROR, ?e);
+                        event!(Level::INFO, "perform auth route check");
+                        match current_route {
+                            Route::RSVP | Route::FAQ | Route::RSVPResult => {
+                                event!(Level::INFO, "reroute");
+                                navigator.push(&Route::Landing)
+                            }
+                            _ => {}
                         }
-                        _ => {}
-                    },
+                    }
                     A::Success(d) => {
+                        event!(Level::INFO, "invite-handle successfully fetched");
                         if let Some(invite) = &d.invite {
                             let id = Some(invite.primary_invitee.id.clone());
-                            items.set(get_nav_items(&wedding_service.relative_day_status, &id))
+                            items.set(get_nav_items(
+                                &wedding_service.relative_day_status,
+                                &livestream_service.0,
+                                &id,
+                            ))
                         } else {
                             match current_route {
                                 Route::RSVP | Route::FAQ | Route::RSVPResult => {

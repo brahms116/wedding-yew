@@ -1,7 +1,6 @@
 use super::*;
 use chrono::Datelike;
 use chrono::{DateTime, Duration, Utc};
-use tracing::debug;
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum WeddingDayStatus {
@@ -43,22 +42,19 @@ impl WeddingDayService for WeddingDayCtxValue {
 
 #[function_component(WeddingDayProvider)]
 pub fn wedding_day_provider(props: &WeddingDayProviderProps) -> Html {
-    debug!(WeddingDayProviderProps = ?props);
     let now = Utc::now();
-    debug!(?now);
     let status = get_wedding_day_status(&props.wedding_datetime, &now, &props.utc_offset);
     let with_offset = props.wedding_datetime + props.utc_offset;
-    let datetime_str = format!("{} UTC+10", with_offset.format("%d.%m.%Y %-l%p"));
+    let datetime_str = format!("{} UTC+10", with_offset.format("%d %B %Y %-l%p"));
 
     let rsvp_by_datetime_with_offset = props.rsvp_by_datetime + props.utc_offset;
-    let rsvp_by_datetime_str = rsvp_by_datetime_with_offset.format("%d.%m.%Y").to_string();
+    let rsvp_by_datetime_str = rsvp_by_datetime_with_offset.format("%d %B %Y").to_string();
 
     let wedding_day_info = WeddingDayCtxValue {
         relative_day_status: status,
         datetime_str,
         rsvp_by_datetime_str,
     };
-    debug!(WeddingDayInfo = ?wedding_day_info);
     html! {
         <ContextProvider<WeddingDayCtxValue> context={wedding_day_info}>
             {for props.children.iter()}

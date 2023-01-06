@@ -39,8 +39,6 @@ pub fn form(props: &FormProps) -> Html {
             })
         };
 
-        debug!(value = invitee.rsvp.unwrap_or(false));
-
         html! {
             <div>
                 <div
@@ -86,7 +84,7 @@ pub fn form(props: &FormProps) -> Html {
                 </div>
                 <div>
                     <textarea
-                        id="dietary-requirements"
+                        id={format!("{}-dietary-requirements", invitee.id)}
                         value={invitee.dietary_requirements}
                         onchange={on_text_area_change}
                         class="

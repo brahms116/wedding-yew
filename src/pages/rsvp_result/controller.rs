@@ -21,10 +21,12 @@ where
             | AsyncResourceHandle::InitialErr(..)
             | AsyncResourceHandle::SubsequentErr(..) => self.state_setter.set(RsvpResultState {
                 title_text: "No Information".into(),
+                loading_css_class: "".to_string(),
             }),
             AsyncResourceHandle::InitialLoad | AsyncResourceHandle::SubsequentLoad(..) => {
                 self.state_setter.set(RsvpResultState {
-                    title_text: "Loading...".into(),
+                    title_text: "Loading your rsvp result".into(),
+                    loading_css_class: "loading animate-pulse".to_string(),
                 })
             }
             AsyncResourceHandle::Success(d) => {
@@ -32,16 +34,19 @@ where
                     if invite.is_coming() {
                         self.state_setter.set(RsvpResultState {
                             title_text: get_coming_message(),
+                            loading_css_class: "".to_string(),
                         })
                     } else {
                         self.state_setter.set(RsvpResultState {
                             title_text: get_not_coming_message(),
+                            loading_css_class: "".to_string(),
                         })
                     }
                 } else {
                     self.state_setter.set({
                         RsvpResultState {
                             title_text: "".into(),
+                            loading_css_class: "".to_string(),
                         }
                     })
                 }

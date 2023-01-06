@@ -1,6 +1,22 @@
 use super::*;
-use async_trait::async_trait;
+use gloo_net::http::Request;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tracing::{event, span, Level};
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ApiResponse {
+    pub data: Option<Invitation>,
+    pub err: Option<ErrResponse>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ErrResponse {
+    pub err_type: String,
+    pub msg: Option<String>,
+}
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum AsyncResourceHandle<T, E>
@@ -26,6 +42,13 @@ where
             Self::InitialLoad => true,
             Self::SubsequentLoad(_) => true,
             _ => false,
+        }
+    }
+
+    pub fn err(&self) -> Option<&E> {
+        match self {
+            Self::InitialErr(e) | Self::SubsequentErr(e, ..) => Some(e),
+            _ => None,
         }
     }
 
@@ -69,40 +92,94 @@ where
 #[derive(Clone, PartialEq, Debug)]
 pub struct FetchService(pub String);
 
-#[async_trait]
-impl InviteApi for FetchService {
-    async fn fetch_invite(&self, id: &str) -> Result<Invitation, ApiError> {
-        Ok(Invitation {
-            primary_invitee: Invitee {
-                id: "myid".into(),
-                fname: "David".into(),
-                lname: "Kwong".into(),
-                rsvp: Some(true),
-                dietary_requirements: "".into(),
-            },
-            dependents: vec![
-                Invitee {
-                    id: "myid2".into(),
-                    fname: "Mia".into(),
-                    lname: "Huang".into(),
-                    rsvp: None,
-                    dietary_requirements: "My water needs to be warm".into(),
-                },
-                Invitee {
-                    id: "myid3".into(),
-                    fname: "William".into(),
-                    lname: "Kwong".into(),
-                    rsvp: Some(false),
-                    dietary_requirements: "Big portions".into(),
-                },
-            ],
-        })
-        // Err(ApiError::NotInvited("myid5".into()))
-        // Err(ApiError::FetchFailure("Connection failed".into()))
+pub async fn fetch_invite(url: &str, id: &str) -> Result<Invitation, ApiError> {
+    let span = span!(target: "fetch-invite-func", Level::DEBUG, "fetch-invite-api-call");
+    let _enter = span.enter();
+    event!(Level::INFO, "Calling fetch invite api func");
+    event!(Level::DEBUG, url, id);
+    let request = Request::post(url)
+        .json(&serde_json::json!({
+            "function":"fetchInvitation",
+            "params": {
+                "id":id
+            }
+        }))
+        .expect("Should serialize correctly")
+        .send()
+        .await;
+
+    if let Err(err) = request {
+        event!(Level::ERROR, ?err);
+        return Err(ApiError::FetchFailure(err.to_string()));
     }
 
-    async fn save_invite(&self, invitation: &Invitation) -> Result<bool, ApiError> {
-        Ok(true)
+    let response = request.expect("Should handle err");
+    let json_response = response
+        .json::<ApiResponse>()
+        .await
+        .map_err(|e| ApiError::FetchFailure(e.to_string()))?;
+
+    if let None = json_response.data {
+        if let Some(err) = json_response.err {
+            event!(Level::ERROR, ?err);
+            return Err(ApiError::FetchFailure(err.err_type));
+        }
+        // TODO: Properly parse errors here
+        return Err(ApiError::FetchFailure("Some error".to_string()));
+    }
+    let invite = json_response.data.unwrap();
+    event!(Level::INFO, "successfully fetched invite");
+    event!(Level::DEBUG, ?invite);
+    Ok(invite)
+}
+
+pub async fn save_invite(url: &str, invitation: &Invitation) -> Result<Invitation, ApiError> {
+    let span = span!(target: "save-invite-func", Level::DEBUG, "save-invite-api-call");
+    let _enter = span.enter();
+    event!(Level::INFO, "Calling save invite api func");
+    event!(Level::DEBUG, url, ?invitation);
+    let request = Request::post(url)
+        .json(&serde_json::json!({
+            "function":"updateInvitation",
+            "params": {
+                "invitation":serde_json::json!(invitation)
+            }
+        }))
+        .expect("Should serialize correctly")
+        .send()
+        .await;
+
+    if let Err(err) = request {
+        return Err(ApiError::FetchFailure(err.to_string()));
+    }
+
+    let response = request.expect("Should handle err");
+    let json_response = response
+        .json::<ApiResponse>()
+        .await
+        .map_err(|e| ApiError::FetchFailure(e.to_string()))?;
+
+    if let None = json_response.data {
+        if let Some(err) = json_response.err {
+            event!(Level::ERROR, ?err);
+            return Err(ApiError::FetchFailure(err.err_type));
+        }
+        // TODO: Properly parse errors here
+        return Err(ApiError::FetchFailure("Some error".to_string()));
+    }
+    let invite = json_response.data.unwrap();
+    event!(Level::INFO, "successfully fetched invite");
+    event!(Level::DEBUG, ?invite);
+    Ok(invite)
+}
+
+pub trait InviteApi2 {
+    fn get_url(&self) -> &str;
+}
+
+impl InviteApi2 for FetchService {
+    fn get_url(&self) -> &str {
+        &self.0
     }
 }
 
@@ -112,11 +189,4 @@ pub enum ApiError {
     NotInvited(String),
     #[error("Failed to fetch invite, reason: {0}")]
     FetchFailure(String),
-}
-
-#[async_trait]
-pub trait InviteApi {
-    async fn fetch_invite(&self, id: &str) -> Result<Invitation, ApiError>;
-
-    async fn save_invite(&self, invitation: &Invitation) -> Result<bool, ApiError>;
 }
