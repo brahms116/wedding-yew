@@ -1,7 +1,5 @@
-use gloo_utils::document;
 use serde::Serialize;
 use std::hash::Hash;
-use web_sys::HtmlElement;
 
 use super::*;
 
