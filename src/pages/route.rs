@@ -10,8 +10,8 @@ pub enum Route {
     RSVP,
     #[at("/faq")]
     FAQ,
-    #[at("/stream")]
-    LiveStream,
+    #[at("/schedule")]
+    Schedule,
     #[at("/story")]
     Story,
     #[at("/submit")]
@@ -31,7 +31,7 @@ pub fn switch(routes: Route) -> Html {
         Route::RSVP => html! {<rsvp::RSVPPage/>},
         Route::FAQ => html! {<faq::FaqPage/>},
         Route::Story => html! {<story::StoryPage/>},
-        Route::LiveStream => html! {<rsvp::RSVPPage/>},
+        Route::Schedule => html! {<schedule::SchedulePage/>},
         Route::RSVPResult => html! {<rsvp_result::RsvpResultPage/>},
     }
 }
