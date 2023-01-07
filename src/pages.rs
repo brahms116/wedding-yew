@@ -8,6 +8,7 @@ mod livestream;
 mod route;
 mod rsvp;
 mod rsvp_result;
+mod schedule;
 mod story;
 mod utils;
 

@@ -20,7 +20,7 @@ pub fn story_page() -> Html {
                 <div
                     class={"text-[18px] mb-[12px] leading-loose"}
                 >
-                {"Fast-forward to 2020 when Mia moved to Brisbane, they were surprised to meet each other again at UniConnect - a Christian uni students event held at Ann Street Church. “He/she is a Christian too?” They asked themselves in their befuddled minds. From there on they saw each other everywhere (unintentionally) - with their fellow piano friends, in the Con Christian group, at church…this forced them to at least remember each other’s name."}
+                {"Fast-forward to 2020 when Mia moved to Brisbane, they were surprised to meet each other again at UniConnect - a Christian uni students event held at Ann Street Church. “He/she is a Christian too?” They asked themselves in their befuddled minds. From there on they saw each other everywhere (unintentionally) - with their fellow piano friends, in the Con Christian group, at church…this forced them to at least remember each other’s names."}
                 </div>
                 <div
                     class={"text-[18px] mb-[12px] leading-loose"}

@@ -45,6 +45,15 @@ pub fn get_nav_items(
                 ));
                 items.push((
                     NavDestination::AppWithQuery(
+                        Route::Schedule,
+                        UrlQuery {
+                            id: Some(id.clone()),
+                        },
+                    ),
+                    "Schedule".into(),
+                ));
+                items.push((
+                    NavDestination::AppWithQuery(
                         Route::RSVP,
                         UrlQuery {
                             id: Some(id.clone()),
@@ -64,6 +73,15 @@ pub fn get_nav_items(
                         },
                     ),
                     "FAQ".into(),
+                ));
+                items.push((
+                    NavDestination::AppWithQuery(
+                        Route::Schedule,
+                        UrlQuery {
+                            id: Some(id.clone()),
+                        },
+                    ),
+                    "Schedule".into(),
                 ));
             }
             items.push((
