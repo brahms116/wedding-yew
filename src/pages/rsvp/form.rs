@@ -61,7 +61,7 @@ pub fn form(props: &FormProps) -> Html {
                             class="invisible absolute"
                         />
                         <label for={format!("{}-coming", invitee.id)} class="radio-label text-[18px] cursor-pointer">
-                            {"Yes"}
+                            {"Yes - keen!"}
                         </label>
                     </div>
                     <div>
@@ -75,7 +75,7 @@ pub fn form(props: &FormProps) -> Html {
                             class="invisible absolute"
                         />
                         <label for={format!("{}-not-coming", invitee.id)} class="radio-label text-[18px] cursor-pointer">
-                            {"No"}
+                            {"No - will be there in spirit"}
                         </label>
                     </div>
                 </div>

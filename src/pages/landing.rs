@@ -121,16 +121,21 @@ pub fn landing_page() -> Html {
                                 {"David & Mia"}
                             </div>
                             <div class="text-[1.125rem]">
-                                {"Ann St Presbyterian"}
+                                {"Ann Street Presbyterian Church"}
                             </div>
                             <div class="text-[1.125rem] mb-6">
                                 {state.wedding_date_time_text.clone()}
                             </div>
                             if state.rsvp_by_date.is_some() {
-                                <div class="text-[1.125rem] mt-4 mb-4">
+                                <div class="text-[1.125rem] mt-2 mb-2">
+                                {"Reception to follow"}
+                                </div>
+                            }
+                            if state.rsvp_by_date.is_some() {
+                                <div class="text-[1.125rem] mt-2 mb-8">
                                     {
                                         format!(
-                                            "Please rsvp by - {}",
+                                            "Please RSVP by - {}",
                                             state.rsvp_by_date.clone()
                                                 .expect("Should have checked for none")
                                         )

@@ -13,19 +13,44 @@ pub fn schedule_page() -> Html {
                     {"Schedule"}
                 </div>
                 <div
-                    class={"text-[18px] mb-[12px] leading-loose"}
+                    class={"text-[24px] mb-[6px] font-bold"}
                 >
-                {"2-3pm: Ceremony - Ann Street Presbyterian Church"}
+                {"2pm"}
                 </div>
                 <div
                     class={"text-[18px] mb-[12px] leading-loose"}
                 >
-                {"3-4pm: Afternoon tea and photos - Church Foyer"}
+                {"Ceremony - Ann Street Presbyterian Church"}
+                </div>
+                <div
+                    class={"text-[24px] mb-[6px] font-bold"}
+                >
+                {"3pm"}
                 </div>
                 <div
                     class={"text-[18px] mb-[12px] leading-loose"}
                 >
-                {"5-10pm: Reception - Transcontinental Hotel"}
+                {"Afternoon tea and photos - Church Foyer"}
+                </div>
+                <div
+                    class={"text-[24px] mb-[6px] font-bold"}
+                >
+                {"5pm"}
+                </div>
+                <div
+                    class={"text-[18px] mb-[12px] leading-loose"}
+                >
+                {"Reception - Transcontinental Hotel"}
+                </div>
+                <div
+                    class={"text-[24px] mb-[6px] font-bold"}
+                >
+                {"10pm"}
+                </div>
+                <div
+                    class={"text-[18px] mb-[12px] leading-loose"}
+                >
+                {"Reception ends"}
                 </div>
             </div>
         </div>
