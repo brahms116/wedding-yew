@@ -56,7 +56,7 @@ pub fn faq_page() -> Html {
                 <div
                     class={"text-[18px] mb-[28px] leading-loose"}
                 >
-                {"The reception is at Transcontinental Hotel (482 George St, Brisbane City). It’s less than 10 minutes’ walk from Ann Street Church (however please do not leave your car at Ann Street if you don’t have an access card). Alternatively, the reception venue offers all day parking for $9***."}
+                {"The reception is at Transcontinental Hotel (482 George St, Brisbane City). It’s less than 10 minutes’ walk from Ann Street Church (however please do not leave your car at Ann Street if you don’t have an access card). Alternatively, the reception venue offers all day parking for a small fee."}
                 </div>
                 <div
                     class="text-[20px] font-semibold"
@@ -78,7 +78,7 @@ The only exception is when the bridal party is walking down the aisle - we ask t
                 <div
                     class={"text-[18px] mb-[28px] leading-loose"}
                 >
-                {"Your presence will be absolutely enough to make our day! Should you wish to bless us with a gift, however, we would greatly appreciate any monetary gifts to help us start our new life together."}
+                {"Your presence will be absolutely enough to make our day! Please don't feel obligated to bring a gift. Should you wish to bless us with a gift, however, we would greatly appreciate any monetary gifts to help us start our new life together."}
                 </div>
                 <div
                     class="text-[20px] font-semibold"
