@@ -22,6 +22,7 @@ pub struct WeddingDayProviderProps {
 pub struct WeddingDayCtxValue {
     pub relative_day_status: WeddingDayStatus,
     pub datetime_str: String,
+    pub schedule_datetime_str: String,
     pub rsvp_by_datetime_str: String,
 }
 
@@ -46,6 +47,7 @@ pub fn wedding_day_provider(props: &WeddingDayProviderProps) -> Html {
     let status = get_wedding_day_status(&props.wedding_datetime, &now, &props.utc_offset);
     let with_offset = props.wedding_datetime + props.utc_offset;
     let datetime_str = format!("{} (UTC+10)", with_offset.format("%d %B %Y %-l%p"));
+    let schedule_datetime_str = format!("{}", with_offset.format("%d %B %Y"));
 
     let rsvp_by_datetime_with_offset = props.rsvp_by_datetime + props.utc_offset;
     let rsvp_by_datetime_str = rsvp_by_datetime_with_offset.format("%d %B %Y").to_string();
@@ -53,6 +55,7 @@ pub fn wedding_day_provider(props: &WeddingDayProviderProps) -> Html {
     let wedding_day_info = WeddingDayCtxValue {
         relative_day_status: status,
         datetime_str,
+        schedule_datetime_str,
         rsvp_by_datetime_str,
     };
     html! {
