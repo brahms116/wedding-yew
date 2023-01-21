@@ -13,6 +13,11 @@ pub fn schedule_page() -> Html {
                     {"Schedule"}
                 </div>
                 <div
+                    class={"text-[18px] mb-[12px] leading-loose"}
+                >
+                {"11 March 2023 2PM (UTC+10)"}
+                </div>
+                <div
                     class={"text-[24px] mb-[6px] font-bold"}
                 >
                 {"2pm"}
