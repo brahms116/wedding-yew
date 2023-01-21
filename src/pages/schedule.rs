@@ -17,7 +17,7 @@ pub fn schedule_page() -> Html {
                 <div
                     class={"text-[28px] mb-[8px] font-bold"}
                 >
-                {wedding_day_ctx.datetime_str}
+                {wedding_day_ctx.schedule_datetime_str}
                 </div>
                 <div
                     class={"text-[24px] mb-[6px] font-bold"}
