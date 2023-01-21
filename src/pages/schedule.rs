@@ -3,6 +3,8 @@ use super::*;
 #[function_component(SchedulePage)]
 pub fn schedule_page() -> Html {
     let (nav_items, default_route) = use_auth();
+    let wedding_day_ctx =
+        use_context::<WeddingDayCtxValue>().expect("Wedding day ctx should be provided");
     html! {
         <div>
             <NavMenu<Route, UrlQuery> default_route={default_route} routes={nav_items}/>
@@ -13,9 +15,9 @@ pub fn schedule_page() -> Html {
                     {"Schedule"}
                 </div>
                 <div
-                    class={"text-[18px] mb-[12px] leading-loose"}
+                    class={"text-[28px] mb-[8px] font-bold"}
                 >
-                {"11 March 2023 2PM (UTC+10)"}
+                {wedding_day_ctx.datetime_str}
                 </div>
                 <div
                     class={"text-[24px] mb-[6px] font-bold"}
