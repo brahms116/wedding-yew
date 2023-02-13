@@ -131,17 +131,6 @@ pub fn landing_page() -> Html {
                                 {"(Reception to follow)"}
                                 </div>
                             }
-                            if state.rsvp_by_date.is_some() {
-                                <div class="text-[1.125rem] mt-2">
-                                    {
-                                        format!(
-                                            "Please RSVP by {}",
-                                            state.rsvp_by_date.clone()
-                                                .expect("Should have checked for none")
-                                        )
-                                    }
-                                </div>
-                            }
                             <div class="mt-8">
                                 <button type="button"
                                     class="
