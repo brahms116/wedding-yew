@@ -42,7 +42,7 @@ impl LandingState {
     pub fn today(&mut self, live_stream_url: String, wedding_date_str: String) {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
-        self.cta_button_text = String::from("Live Stream");
+        self.cta_button_text = String::from("Livestream");
         self.cta_button_id = String::from("live-stream-button");
         self.cta_button_route = NavDestination::External(String::from(live_stream_url));
         self.title_text = get_today_title();
@@ -57,7 +57,7 @@ impl LandingState {
     ) {
         self.enter_button_loading = false;
         self.wedding_date_time_text = Self::format_wedding_date_str(wedding_date_str);
-        self.cta_button_text = String::from("Live Stream");
+        self.cta_button_text = String::from("Livestream");
         self.cta_button_id = String::from("live-stream-button");
         self.cta_button_route = NavDestination::External(String::from(live_stream_url));
         self.title_text = get_today_invited_title(invite.get_fnames());
@@ -205,7 +205,7 @@ mod landing_state_test {
 
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.wedding_date_time_text, String::from("abc"));
-        assert_eq!(state.cta_button_text, "Live Stream".to_owned());
+        assert_eq!(state.cta_button_text, "Livestream".to_owned());
         assert_eq!(
             state.cta_button_route,
             NavDestination::External(String::from("www.google.com"))
@@ -223,7 +223,7 @@ mod landing_state_test {
 
         assert_eq!(state.enter_button_loading, false);
         assert_eq!(state.wedding_date_time_text, String::from("abc"));
-        assert_eq!(state.cta_button_text, "Live Stream".to_owned());
+        assert_eq!(state.cta_button_text, "Livestream".to_owned());
         assert_eq!(
             state.cta_button_route,
             NavDestination::External(String::from("www.google.com"))

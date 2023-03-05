@@ -86,7 +86,7 @@ pub fn get_nav_items(
             }
             items.push((
                 NavDestination::External(livestream_link.into()),
-                "Live stream".into(),
+                "Livestream".into(),
             ));
         }
         WeddingDayStatus::Passed => {}
