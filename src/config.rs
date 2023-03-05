@@ -14,5 +14,5 @@ pub fn get_rsvp_by_date() -> DateTime<Utc> {
 }
 
 pub fn get_live_stream_url() -> String {
-    String::from("https://www.google.com")
+    String::from("https://www.youtube.com/@AnnStreetPresbyterianChurch/live")
 }
